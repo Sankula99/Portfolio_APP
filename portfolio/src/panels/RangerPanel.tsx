@@ -50,27 +50,6 @@ function ExperienceView() {
               <li key={b} dangerouslySetInnerHTML={{ __html: highlightKeywords(b) }} />
             ))}
           </ul>
-
-          <div className="ranger-skill-row">
-            <span className="ranger-skill-label">Skills Used:</span>
-            <div className="ranger-tags">
-              {exp.skillsUsed.map((tag) => (
-                <span key={tag} className="ranger-tag">
-                  {tag}
-                </span>
-              ))}
-            </div>
-          </div>
-          <div className="ranger-skill-row">
-            <span className="ranger-skill-label">Skills Developed:</span>
-            <div className="ranger-tags">
-              {exp.skillsDeveloped.map((tag) => (
-                <span key={tag} className="ranger-tag ranger-tag--muted">
-                  {tag}
-                </span>
-              ))}
-            </div>
-          </div>
         </article>
       ))}
     </div>

@@ -76,6 +76,7 @@ button {
   background-size: 24px 24px;
 }
 
+/* Screens shell */
 .app-shell {
   flex: 1;
   min-height: 100vh;
@@ -105,7 +106,6 @@ button {
 }
 
 /* Login */
-
 .login-root {
   position: relative;
   min-height: calc(100vh - 40px);
@@ -237,7 +237,6 @@ button {
 }
 
 /* Boot */
-
 .boot-root {
   min-height: calc(100vh - 40px);
   background: #000;
@@ -275,8 +274,7 @@ button {
   animation: blink 0.9s step-end infinite;
 }
 
-/* Desktop */
-
+/* Desktop basics */
 .desktop-root {
   min-height: calc(100vh - 40px);
   display: flex;
@@ -356,7 +354,7 @@ button {
 .desktop-grid {
   flex: 1;
   display: grid;
-  grid-template-columns: 380px minmax(0, 1fr);
+  grid-template-columns: 320px minmax(0, 1fr);
   grid-template-rows: minmax(0, 1fr);
   gap: 8px;
   margin-top: 8px;
@@ -389,7 +387,6 @@ button {
 }
 
 /* Panels */
-
 .panel {
   background: var(--panel);
   border-radius: 8px;
@@ -423,7 +420,6 @@ button {
 
 .panel-ranger {
   animation-delay: 0.12s;
-  height: 100%;
 }
 .panel-nvim {
   animation-delay: 0.18s;
@@ -438,8 +434,8 @@ button {
 /* Ranger */
 .ranger-body {
   display: grid;
-  grid-template-columns: 140px minmax(0, 1fr);
-  min-height: 280px;
+  grid-template-columns: 120px minmax(0, 1fr);
+  min-height: 260px;
 }
 .ranger-dirs {
   border-right: 1px solid var(--border);
@@ -501,35 +497,6 @@ button {
 }
 .ranger-highlight {
   color: var(--ice);
-}
-.ranger-skill-row {
-  margin-top: 6px;
-  display: flex;
-  align-items: flex-start;
-  gap: 6px;
-  flex-wrap: wrap;
-}
-.ranger-skill-label {
-  font-size: 10px;
-  color: var(--grey-3);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-}
-.ranger-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-}
-.ranger-tag {
-  padding: 2px 6px;
-  border-radius: 999px;
-  border: 1px solid var(--border);
-  background: var(--panel2);
-  color: var(--grey-1);
-  font-size: 10px;
-}
-.ranger-tag--muted {
-  color: var(--grey-3);
 }
 
 /* Nvim */
@@ -761,7 +728,7 @@ button {
   color: var(--grey-3);
 }
 
-/* Contact */
+/* Contact full page */
 .contact-root {
   flex: 1;
   display: flex;

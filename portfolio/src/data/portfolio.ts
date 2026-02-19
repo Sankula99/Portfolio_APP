@@ -4,8 +4,6 @@ export type ExperienceEntry = {
   company: string
   period: string
   bullets: string[]
-  skillsUsed: string[]
-  skillsDeveloped: string[]
 }
 
 export type EducationEntry = {
@@ -56,15 +54,6 @@ export const experienceEntries: ExperienceEntry[] = [
       'Established workflows for code reviews, version control practices and documentation standards',
       'Developed BERT-based NLP classification model in Python for automated document classification',
     ],
-    skillsUsed: ['React', 'TypeScript', 'Supabase', 'Python', 'BERT', 'Git/GitHub'],
-    skillsDeveloped: [
-      'System Architecture',
-      'Team Leadership',
-      'NLP',
-      'ML Engineering',
-      'Code Review',
-      'Technical Documentation',
-    ],
   },
   {
     file: '2025_InviteApp.md',
@@ -75,13 +64,6 @@ export const experienceEntries: ExperienceEntry[] = [
       'Developed a mobile web application MVP using React Native and Typescript and Prisma',
       'Led frontend architecture and component design for scalability and responsiveness',
       'Collaborated with backend developers and designers to connect to a centralised database',
-    ],
-    skillsUsed: ['React Native', 'TypeScript', 'Prisma', 'Node.js', 'PostgreSQL'],
-    skillsDeveloped: [
-      'Frontend Architecture',
-      'Reusable Components',
-      'Product Discovery',
-      'Cross-team Collaboration',
     ],
   },
 ]
@@ -105,9 +87,9 @@ export const projectEntries: ProjectEntry[] = [
     name: 'Heart Disease Detection',
     period: 'Aug 2025 – Nov 2025',
     bullets: [
-      'XGBoost model on UCI Heart Disease dataset (Kaggle)',
-      'Full preprocessing pipeline in Python (cleaning, encoding, scaling)',
-      'Trained and evaluated models; selected optimal parameters by metrics',
+      'XGBoost ML model on UCI Heart Disease dataset (Kaggle)',
+      'Full data preprocessing pipeline in Python',
+      'Feature scaling, encoding, and missing value handling',
     ],
   },
   {

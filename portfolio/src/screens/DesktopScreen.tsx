@@ -14,9 +14,7 @@ export function DesktopScreen() {
   const [page, setPage] = useState<DesktopPage>('main')
 
   useEffect(() => {
-    const id = window.setInterval(() => {
-      setClock(formatDesktopClock(new Date()))
-    }, 1000)
+    const id = window.setInterval(() => setClock(formatDesktopClock(new Date())), 1000)
     return () => window.clearInterval(id)
   }, [])
 
