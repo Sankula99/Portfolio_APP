@@ -38,7 +38,10 @@ export function DesktopScreen() {
               <NvimPanel />
               <div className="desktop-bottom-row">
                 <BtopPanel />
-                <HtopPanel />
+                <div className="desktop-bottom-right">
+                  <HtopPanel />
+                  <ContactMini />
+                </div>
               </div>
             </div>
           </div>
@@ -172,6 +175,55 @@ function ContactPage() {
         </div>
       </section>
     </div>
+  )
+}
+
+function ContactMini() {
+  return (
+    <section className="panel contact-mini">
+      <header className="panel-titlebar">contact_min.md</header>
+      <div className="contact-mini-body">
+        <div className="contact-mini-main">
+          <div className="contact-mini-heading">Get in touch</div>
+          <div className="contact-mini-email">sankulas99@gmail.com</div>
+        </div>
+
+        <div className="contact-mini-actions">
+          <a href={resumePdf} className="contact-mini-btn" download>
+            [ Download Resume ]
+          </a>
+          <a
+            href={resumePdf}
+            className="contact-mini-btn contact-mini-btn--secondary"
+            target="_blank"
+            rel="noreferrer"
+          >
+            [ View Resume ]
+          </a>
+        </div>
+
+        <div className="contact-mini-links">
+          <a
+            href="https://github.com/Sankula99"
+            target="_blank"
+            rel="noreferrer"
+            className="nvim-link-pill"
+          >
+            github
+          </a>
+          <a
+            href="https://www.linkedin.com/in/shishirsankula"
+            target="_blank"
+            rel="noreferrer"
+            className="nvim-link-pill"
+          >
+            linkedin
+          </a>
+        </div>
+
+        <p className="contact-mini-note">Full contact &amp; form on workspace [2].</p>
+      </div>
+    </section>
   )
 }
 

@@ -374,6 +374,12 @@ button {
   gap: 8px;
 }
 
+.desktop-bottom-right {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
 @media (max-width: 1100px) {
   .screen {
     padding-inline: 16px;
@@ -833,6 +839,69 @@ button {
   .contact-body {
     grid-template-columns: minmax(0, 1fr);
   }
+}
+
+/* Contact mini tile */
+.contact-mini-body {
+  padding: 10px 12px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.contact-mini-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.contact-mini-heading {
+  font-family: 'Syne', system-ui, -apple-system;
+  font-size: 14px;
+  color: var(--slate);
+}
+
+.contact-mini-email {
+  font-size: 11px;
+  color: var(--ice);
+}
+
+.contact-mini-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.contact-mini-btn {
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--ice);
+  padding: 4px 10px;
+  font-size: 10px;
+  color: var(--ice);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.contact-mini-btn--secondary {
+  border-color: var(--border);
+  color: var(--grey-1);
+}
+
+.contact-mini-btn:hover {
+  border-color: var(--border-h);
+  background: rgba(126, 200, 224, 0.06);
+}
+
+.contact-mini-links {
+  display: flex;
+  gap: 6px;
+}
+
+.contact-mini-note {
+  margin: 2px 0 0;
+  font-size: 10px;
+  color: var(--grey-3);
 }
 
 /* Welcome overlay */
