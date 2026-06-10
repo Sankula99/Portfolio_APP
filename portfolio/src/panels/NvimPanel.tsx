@@ -68,7 +68,7 @@ export function NvimPanel() {
                 &nbsp;&nbsp;
                 <span className="nvim-key">passion</span>
                 <span className="nvim-op">:</span>{' '}
-                <span className="nvim-str">[&quot;NLP&quot;, &quot;Full-Stack&quot;, &quot;ML&quot;]</span>
+                <span className="nvim-str">[&quot;Data-Engineering&quot;,&quot;ML&quot;,&quot;NLP&quot;,&quot;Full-Stack&quot;,&quot;Cybersecurity&quot;]</span>
                 ,
                 {'\n'}
                 &nbsp;&nbsp;
