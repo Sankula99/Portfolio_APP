@@ -33,6 +33,13 @@
   --green: #5ea880;
   --amber: #a89460;
 
+  /* Git contribution levels */
+  --contrib-0: #0d0f12;
+  --contrib-1: #1a2e28;
+  --contrib-2: #2a5248;
+  --contrib-3: #3d7a66;
+  --contrib-4: #5ea880;
+
   --radius-lg: 14px;
   --radius-md: 10px;
   --radius-pill: 999px;
@@ -42,6 +49,18 @@
 *::before,
 *::after {
   box-sizing: border-box;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 html,
@@ -164,60 +183,20 @@ button {
   margin-bottom: 18px;
 }
 
-.login-form {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+.login-terminal {
+  text-align: left;
+  margin-top: 4px;
 }
 
-.login-label {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 6px;
-  font-size: 12px;
+.login-boot-line {
+  margin: 0 0 6px;
+  font-size: 10px;
   color: var(--grey-2);
 }
 
-.login-input {
-  width: 100%;
-  padding: 8px 10px;
-  border-radius: 6px;
-  border: 1px solid var(--border);
-  background: #050608;
-  color: var(--grey-1);
-}
-
-.login-input:focus-visible {
-  outline: 1px solid var(--ice);
-}
-
-.login-btn {
-  margin-top: 8px;
-  width: 100%;
-  padding: 9px 10px;
-  border-radius: 6px;
-  border: 1px solid var(--ice);
-  background: transparent;
+.login-cursor {
   color: var(--ice);
-  letter-spacing: 0.18em;
-  font-size: 11px;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: border-color 200ms ease, box-shadow 200ms ease, color 200ms ease,
-    background-color 200ms ease;
-}
-
-.login-btn:hover {
-  border-color: var(--border-h);
-  box-shadow: 0 0 14px rgba(126, 200, 224, 0.3);
-  background-color: rgba(126, 200, 224, 0.06);
-}
-
-.login-hint {
-  margin-top: 14px;
-  font-size: 10px;
-  color: var(--syn-cmt);
+  animation: blink 0.9s step-end infinite;
 }
 
 .login-footer {
@@ -351,10 +330,25 @@ button {
   align-items: center;
 }
 
+.desktop-hint {
+  margin: 0;
+  padding: 4px 10px;
+  font-size: 10px;
+  color: var(--grey-2);
+  background: var(--panel2);
+  border-radius: 6px;
+  border: 1px solid var(--border);
+}
+
+.desktop-hint strong {
+  color: var(--ice);
+  font-weight: 600;
+}
+
 .desktop-grid {
   flex: 1;
   display: grid;
-  grid-template-columns: 320px minmax(0, 1fr);
+  grid-template-columns: 400px minmax(0, 1fr);
   grid-template-rows: minmax(0, 1fr);
   gap: 8px;
   margin-top: 8px;
@@ -368,15 +362,16 @@ button {
   min-height: 0;
 }
 
+.desktop-col-left--fixed {
+  width: 400px;
+  min-width: 400px;
+  max-width: 400px;
+  flex: 0 0 400px;
+}
+
 .desktop-bottom-row {
   display: grid;
   grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
-  gap: 8px;
-}
-
-.desktop-bottom-right {
-  display: flex;
-  flex-direction: column;
   gap: 8px;
 }
 
@@ -386,6 +381,12 @@ button {
   }
   .desktop-grid {
     grid-template-columns: minmax(0, 1fr);
+  }
+  .desktop-col-left--fixed {
+    width: 100%;
+    min-width: 0;
+    max-width: none;
+    flex: 1 1 auto;
   }
   .desktop-bottom-row {
     grid-template-columns: minmax(0, 1fr);
@@ -426,6 +427,8 @@ button {
 
 .panel-ranger {
   animation-delay: 0.12s;
+  flex: 1;
+  min-height: 0;
 }
 .panel-nvim {
   animation-delay: 0.18s;
@@ -433,15 +436,27 @@ button {
 .panel-btop {
   animation-delay: 0.24s;
 }
-.panel-htop {
+.panel-contact {
   animation-delay: 0.3s;
+  min-height: 0;
+}
+.panel-recruiter {
+  animation-delay: 0.12s;
+  flex: 1;
 }
 
 /* Ranger */
+.ranger-shell {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
 .ranger-body {
   display: grid;
-  grid-template-columns: 120px minmax(0, 1fr);
-  min-height: 260px;
+  grid-template-columns: 108px minmax(0, 1fr);
+  flex: 1;
+  min-height: 0;
 }
 .ranger-dirs {
   border-right: 1px solid var(--border);
@@ -485,6 +500,7 @@ button {
 .ranger-file {
   color: var(--ice);
   font-size: 11px;
+  white-space: nowrap;
 }
 .ranger-role {
   color: var(--slate);
@@ -505,10 +521,66 @@ button {
   color: var(--ice);
 }
 
+/* Git contribution graph */
+.git-contrib {
+  flex-shrink: 0;
+  padding: 8px 10px 10px;
+  border-top: 1px solid var(--border);
+}
+.git-contrib-label {
+  font-size: 9px;
+  color: var(--grey-3);
+  margin-bottom: 6px;
+  letter-spacing: 0.04em;
+}
+.git-contrib-grid {
+  display: grid;
+  gap: 2px;
+  width: 100%;
+}
+.git-contrib-cell {
+  aspect-ratio: 1;
+  border-radius: 1px;
+  background: var(--contrib-0);
+}
+.git-contrib-cell--0 {
+  background: var(--contrib-0);
+}
+.git-contrib-cell--1 {
+  background: var(--contrib-1);
+}
+.git-contrib-cell--2 {
+  background: var(--contrib-2);
+}
+.git-contrib-cell--3 {
+  background: var(--contrib-3);
+}
+.git-contrib-cell--4 {
+  background: var(--contrib-4);
+}
+.git-contrib-legend {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  margin-top: 6px;
+  font-size: 9px;
+  color: var(--grey-3);
+}
+.git-contrib-legend-squares {
+  display: flex;
+  gap: 2px;
+}
+.git-contrib-legend-squares .git-contrib-cell {
+  width: 8px;
+  height: 8px;
+  flex-shrink: 0;
+}
+
 /* Nvim */
 .nvim-body {
   display: grid;
-  grid-template-columns: 195px minmax(0, 1fr);
+  grid-template-columns: 220px minmax(0, 1fr);
 }
 .nvim-profile {
   padding: 10px;
@@ -522,8 +594,9 @@ button {
   justify-content: center;
 }
 .nvim-avatar-inner {
-  width: 68px;
-  height: 68px;
+  width: 92px;
+  height: 92px;
+  font-size: 22px;
   border-radius: 50%;
   border: 2px solid var(--ice-dark);
   background: radial-gradient(circle at top, #182129, #050608);
@@ -691,47 +764,173 @@ button {
   font-size: 10px;
 }
 
-/* Htop */
-.htop-body {
-  padding: 10px 12px;
+/* Contact panel */
+.contact-panel-body {
+  padding: 10px 12px 12px;
   display: flex;
   flex-direction: column;
   gap: 10px;
+  flex: 1;
+  min-height: 0;
 }
-.htop-section-title {
-  color: var(--grey-3);
-  margin-bottom: 4px;
+.contact-panel-heading {
+  margin: 0;
+  font-family: 'Syne', system-ui, -apple-system;
+  font-size: 15px;
+  color: var(--slate);
+  letter-spacing: 0.02em;
+}
+.contact-panel-top {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.contact-panel-email {
+  font-size: 11px;
+  color: var(--ice);
+}
+.contact-panel-btn {
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--ice);
+  padding: 4px 10px;
+  font-size: 10px;
+  color: var(--ice);
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  font-size: 9px;
 }
-.htop-table {
+.contact-panel-btn--secondary {
+  border-color: var(--border);
+  color: var(--grey-1);
+}
+.contact-panel-btn:hover {
+  border-color: var(--border-h);
+  background: rgba(126, 200, 224, 0.06);
+}
+.contact-panel-form {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+.contact-panel-field {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr);
+  align-items: start;
+  gap: 8px;
+}
+.contact-panel-field--message {
+  align-items: start;
+}
+.contact-panel-label {
+  font-size: 11px;
+  color: var(--grey-2);
+  padding-top: 6px;
+}
+.contact-panel-input,
+.contact-panel-textarea {
   width: 100%;
-  border-collapse: collapse;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--grey-1);
+  padding: 5px 8px;
+  font-family: inherit;
   font-size: 11px;
 }
-.htop-table th,
-.htop-table td {
-  padding: 3px 4px;
-  text-align: left;
+.contact-panel-textarea {
+  resize: vertical;
+  min-height: 54px;
 }
-.htop-table thead {
-  border-bottom: 1px solid var(--border);
+.contact-panel-input:focus-visible,
+.contact-panel-textarea:focus-visible {
+  outline: 1px solid var(--ice);
 }
-.htop-table tbody tr:nth-child(2n) {
-  background: rgba(255, 255, 255, 0.01);
+.contact-panel-submit {
+  align-self: center;
+  margin-top: 4px;
+  border-radius: 4px;
+  border: 1px solid var(--ice);
+  background: transparent;
+  color: var(--ice);
+  padding: 5px 14px;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: border-color 160ms ease, background-color 160ms ease;
 }
-.htop-state {
-  font-weight: 600;
+.contact-panel-submit:hover {
+  border-color: var(--border-h);
+  background: rgba(126, 200, 224, 0.06);
 }
-.htop-state--running {
+.contact-panel-status {
+  margin: 2px 0 0;
+  font-size: 10px;
+  text-align: center;
+}
+.contact-panel-status--error {
+  color: #c45c5c;
+}
+.contact-panel-status--success {
   color: var(--green);
 }
-.htop-state--sleep {
-  color: var(--amber);
+
+/* Recruiter panel */
+.recruiter-root {
+  flex: 1;
+  display: flex;
+  margin-top: 8px;
+  min-height: 0;
 }
-.htop-state--zombie {
+.recruiter-body {
+  padding: 12px 16px 14px;
+  display: grid;
+  grid-template-columns: 140px minmax(0, 1fr);
+  gap: 4px 16px;
+  align-content: start;
+}
+.recruiter-row {
+  display: contents;
+}
+.recruiter-label {
+  font-size: 10px;
   color: var(--grey-3);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 3px 0;
+}
+.recruiter-value {
+  font-size: 11px;
+  color: var(--grey-1);
+  padding: 3px 0;
+}
+.recruiter-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--green);
+}
+.recruiter-contact-links a {
+  color: var(--ice);
+}
+.recruiter-contact-links a:hover {
+  text-decoration: underline;
+}
+.recruiter-skills,
+.recruiter-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.recruiter-skills li,
+.recruiter-list li {
+  margin-bottom: 2px;
+}
+.recruiter-list li strong {
+  color: var(--slate);
+  font-weight: 500;
 }
 
 /* Contact full page */
@@ -995,6 +1194,19 @@ button {
 }
 .welcome-text {
   color: var(--grey-1);
+}
+.welcome-recruiter-tip {
+  margin: 12px 0 0;
+  padding: 8px 10px;
+  font-size: 11px;
+  color: var(--grey-1);
+  background: rgba(126, 200, 224, 0.06);
+  border: 1px solid rgba(126, 200, 224, 0.25);
+  border-radius: 6px;
+  line-height: 1.5;
+}
+.welcome-recruiter-tip strong {
+  color: var(--ice);
 }
 .welcome-footnote {
   margin: 10px 0 0;

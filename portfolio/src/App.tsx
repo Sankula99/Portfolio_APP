@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import './App.css'
 import { LoginScreen } from './screens/LoginScreen'
 import { BootScreen } from './screens/BootScreen'
@@ -30,10 +30,11 @@ function App() {
     }, 400)
   }
 
-  const handleLogin = () => {
+  useEffect(() => {
     if (screen !== 'login') return
-    fadeTo('boot')
-  }
+    const id = window.setTimeout(() => fadeTo('boot'), 5000)
+    return () => window.clearTimeout(id)
+  }, [screen])
 
   const handleBootComplete = () => {
     if (screen !== 'boot') return
@@ -49,7 +50,7 @@ function App() {
             screen === 'login' && loginVisible ? 'screen--active' : ''
           } ${transitioning && screen === 'login' ? 'screen--fading' : ''}`}
         >
-          <LoginScreen onLogin={handleLogin} />
+          <LoginScreen />
         </section>
 
         <section

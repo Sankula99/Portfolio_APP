@@ -68,18 +68,22 @@ export function WelcomeOverlay({ onDismiss }: Props) {
               </div>
             </li>
             <li>
-              <span className="welcome-icon">⚙️</span>
+              <span className="welcome-icon">✉️</span>
               <div>
                 <div className="welcome-label">
-                  <strong>htop</strong> (bottom right)
+                  <strong>contact.md</strong> (bottom right)
                 </div>
                 <div className="welcome-text">
-                  A <strong>projects &amp; tools list</strong> — R = actively used, S = familiar, Z =
-                  phasing out.
+                  <strong>Contact &amp; resume</strong> — email, resume links, and a message form to
+                  get in touch.
                 </div>
               </div>
             </li>
           </ul>
+          <p className="welcome-recruiter-tip">
+            Not a Linux person? Click workspace <strong>2</strong> at the top left for a clean,
+            quick glance recruiter view!
+          </p>
           <p className="welcome-footnote">
             Everything is read-only — scroll and explore. The [ 1 ] [ 2 ] [ 3 ] squares at the top
             navigate between sections.

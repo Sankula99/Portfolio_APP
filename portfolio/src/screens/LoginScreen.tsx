@@ -1,23 +1,12 @@
-import type { FormEvent } from 'react'
 import { useEffect, useState } from 'react'
 
-type Props = {
-  onLogin: () => void
-}
-
-export function LoginScreen({ onLogin }: Props) {
-  const [password, setPassword] = useState('')
+export function LoginScreen() {
   const [clock, setClock] = useState<string>(() => formatClock(new Date()))
 
   useEffect(() => {
     const id = window.setInterval(() => setClock(formatClock(new Date())), 1000)
     return () => window.clearInterval(id)
   }, [])
-
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault()
-    onLogin()
-  }
 
   return (
     <div className="login-root">
@@ -30,26 +19,16 @@ export function LoginScreen({ onLogin }: Props) {
 
         <div className="login-username-pill">shishir@portfolio</div>
 
-        <form className="login-form" onSubmit={handleSubmit}>
-          <label className="login-label">
-            <span>Password:</span>
-            <input
-              type="password"
-              className="login-input"
-              placeholder="········"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </label>
-
-          <button type="submit" className="login-btn">
-            [ LOGIN ]
-          </button>
-        </form>
-
-        <p className="login-hint">
-          // Hint: type anything as the password and press Login to explore
-        </p>
+        <div className="login-terminal">
+          <p className="login-boot-line">[ OK ] Authenticating session...</p>
+          <p className="login-boot-line">[ OK ] Loading Hyprland compositor</p>
+          <p className="login-boot-line">
+            [ OK ] Portfolio environment ready
+            <span className="login-cursor" aria-hidden="true">
+              █
+            </span>
+          </p>
+        </div>
       </main>
 
       <footer className="login-footer">
@@ -70,4 +49,3 @@ function formatClock(date: Date) {
     hour12: false,
   }).format(date)
 }
-

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { educationEntry, experienceEntries, projectEntries } from '../data/portfolio'
+import { GitContributionGraph } from '../ui/GitContributionGraph'
 
 type Tab = 'experience' | 'education' | 'projects' | 'skills'
 
@@ -11,25 +12,28 @@ export function RangerPanel() {
   return (
     <section className="panel panel-ranger">
       <header className="panel-titlebar">ranger</header>
-      <div className="ranger-body">
-        <nav className="ranger-dirs">
-          {TABS.map((tab) => (
-            <button
-              key={tab}
-              type="button"
-              className={`ranger-dir ${tab === active ? 'ranger-dir--active' : ''}`}
-              onClick={() => setActive(tab)}
-            >
-              {tab}/
-            </button>
-          ))}
-        </nav>
-        <div className="ranger-content">
-          {active === 'experience' && <ExperienceView />}
-          {active === 'education' && <EducationView />}
-          {active === 'projects' && <ProjectsView />}
-          {active === 'skills' && <SkillsView />}
+      <div className="ranger-shell">
+        <div className="ranger-body">
+          <nav className="ranger-dirs">
+            {TABS.map((tab) => (
+              <button
+                key={tab}
+                type="button"
+                className={`ranger-dir ${tab === active ? 'ranger-dir--active' : ''}`}
+                onClick={() => setActive(tab)}
+              >
+                {tab}/
+              </button>
+            ))}
+          </nav>
+          <div className="ranger-content">
+            {active === 'experience' && <ExperienceView />}
+            {active === 'education' && <EducationView />}
+            {active === 'projects' && <ProjectsView />}
+            {active === 'skills' && <SkillsView />}
+          </div>
         </div>
+        <GitContributionGraph />
       </div>
     </section>
   )

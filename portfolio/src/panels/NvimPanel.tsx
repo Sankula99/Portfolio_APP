@@ -1,3 +1,5 @@
+import { STATUS_BADGE } from '../data/portfolio'
+
 export function NvimPanel() {
   return (
     <section className="panel panel-nvim">
@@ -10,7 +12,7 @@ export function NvimPanel() {
           <div className="nvim-name">Shishir Sankula</div>
           <div className="nvim-role">SE Student · UTS &apos;26</div>
           <div className="nvim-status-badge">
-            <span className="status-dot" /> seeking internship
+            <span className="status-dot" /> {STATUS_BADGE}
           </div>
           <div className="nvim-links">
             <a
@@ -74,7 +76,7 @@ export function NvimPanel() {
                 &nbsp;&nbsp;
                 <span className="nvim-key">status</span>
                 <span className="nvim-op">:</span>{' '}
-                <span className="nvim-str">&quot;Seeking Internship&quot;</span>
+                <span className="nvim-str">&quot;Seeking Internship and Graduate Roles&quot;</span>
                 {'\n'}
                 {'};'}
                 {'\n'}

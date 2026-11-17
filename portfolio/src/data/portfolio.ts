@@ -1,3 +1,5 @@
+export const STATUS_BADGE = 'seeking internship and graduate roles'
+
 export type ExperienceEntry = {
   file: string
   role: string
