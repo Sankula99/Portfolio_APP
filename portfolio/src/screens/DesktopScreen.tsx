@@ -1,4 +1,12 @@
-import { useEffect, useState } from 'react'
+import {
+  useCallback,
+  useEffect,
+  useId,
+  useRef,
+  useState,
+  type KeyboardEvent,
+  type RefObject,
+} from 'react'
 import { RangerPanel } from '../panels/RangerPanel'
 import { NvimPanel } from '../panels/NvimPanel'
 import { BtopPanel } from '../panels/BtopPanel'
@@ -6,35 +14,82 @@ import { ContactPanel } from '../panels/ContactPanel'
 import { RecruiterPanel } from '../panels/RecruiterPanel'
 import { WelcomeOverlay } from '../ui/WelcomeOverlay'
 import { ResumeCrawlData } from '../ui/ResumeCrawlData'
-import { STATUS_BADGE } from '../data/portfolio'
+import { STATUS_BADGE } from '../data/site'
 
-type DesktopPage = 'main' | 'recruiter'
+type DesktopPage = 'recruiter' | 'terminal'
+
+const TERMINAL_TIP_KEY = 'terminalTipSeen'
+
+function readTerminalTipSeen(): boolean {
+  try {
+    return window.sessionStorage.getItem(TERMINAL_TIP_KEY) === '1'
+  } catch {
+    return false
+  }
+}
+
+function markTerminalTipSeen(): void {
+  try {
+    window.sessionStorage.setItem(TERMINAL_TIP_KEY, '1')
+  } catch {
+    // ignore
+  }
+}
 
 export function DesktopScreen() {
   const [clock, setClock] = useState<string>(() => formatDesktopClock(new Date()))
+  const [page, setPage] = useState<DesktopPage>('recruiter')
   const [showOverlay, setShowOverlay] = useState(false)
-  const [page, setPage] = useState<DesktopPage>('main')
+  const terminalTabRef = useRef<HTMLButtonElement>(null)
+  const overlayTimerRef = useRef<number | null>(null)
 
   useEffect(() => {
     const id = window.setInterval(() => setClock(formatDesktopClock(new Date())), 1000)
-    return () => window.clearInterval(id)
+    return () => {
+      window.clearInterval(id)
+      if (overlayTimerRef.current !== null) window.clearTimeout(overlayTimerRef.current)
+    }
   }, [])
 
-  useEffect(() => {
-    const id = window.setTimeout(() => setShowOverlay(true), 400)
-    return () => window.clearTimeout(id)
+  const changePage = useCallback((next: DesktopPage) => {
+    setPage(next)
+    if (overlayTimerRef.current !== null) {
+      window.clearTimeout(overlayTimerRef.current)
+      overlayTimerRef.current = null
+    }
+
+    if (next === 'recruiter') {
+      setShowOverlay(false)
+      return
+    }
+
+    if (!readTerminalTipSeen()) {
+      overlayTimerRef.current = window.setTimeout(() => {
+        setShowOverlay(true)
+        overlayTimerRef.current = null
+      }, 300)
+    }
+  }, [])
+
+  const dismissOverlay = useCallback(() => {
+    markTerminalTipSeen()
+    setShowOverlay(false)
+    terminalTabRef.current?.focus()
   }, [])
 
   return (
     <div className="desktop-root">
       <ResumeCrawlData />
-      <DesktopTopBar clock={clock} page={page} onChangePage={setPage} />
-      <p className="desktop-hint">
-        Not a Linux person? Click workspace <strong>2</strong> at the top left for a clean, quick
-        glance recruiter view!
-      </p>
+      <DesktopTopBar
+        clock={clock}
+        page={page}
+        onChangePage={changePage}
+        terminalTabRef={terminalTabRef}
+      />
 
-      {page === 'main' ? (
+      {page === 'recruiter' ? (
+        <RecruiterPanel onOpenTerminal={() => changePage('terminal')} />
+      ) : (
         <>
           <DesktopPathBar />
           <div className="desktop-grid">
@@ -50,12 +105,13 @@ export function DesktopScreen() {
             </div>
           </div>
 
-          {showOverlay && <WelcomeOverlay onDismiss={() => setShowOverlay(false)} />}
+          {showOverlay ? (
+            <WelcomeOverlay
+              onDismiss={dismissOverlay}
+              returnFocusRef={terminalTabRef}
+            />
+          ) : null}
         </>
-      ) : (
-        <div className="recruiter-root">
-          <RecruiterPanel />
-        </div>
       )}
     </div>
   )
@@ -65,39 +121,74 @@ type TopBarProps = {
   clock: string
   page: DesktopPage
   onChangePage: (page: DesktopPage) => void
+  terminalTabRef: RefObject<HTMLButtonElement | null>
 }
 
-function DesktopTopBar({ clock, page, onChangePage }: TopBarProps) {
+function DesktopTopBar({ clock, page, onChangePage, terminalTabRef }: TopBarProps) {
+  const overviewId = useId()
+  const terminalId = useId()
+  const tablistRef = useRef<HTMLDivElement>(null)
+
+  const onKeyDown = (e: KeyboardEvent) => {
+    if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return
+    e.preventDefault()
+    onChangePage(page === 'recruiter' ? 'terminal' : 'recruiter')
+  }
+
   return (
     <header className="desktop-topbar">
-      <div className="desktop-workspaces">
+      <nav
+        className="desktop-workspaces"
+        role="tablist"
+        aria-label="Portfolio views"
+        ref={tablistRef}
+        onKeyDown={onKeyDown}
+      >
         <button
           type="button"
-          className={`workspace-pill ${page === 'main' ? 'workspace-pill--active' : ''}`}
-          onClick={() => onChangePage('main')}
-        >
-          1
-        </button>
-        <button
-          type="button"
-          className={`workspace-pill ${page === 'recruiter' ? 'workspace-pill--active' : ''}`}
+          id={overviewId}
+          role="tab"
+          aria-selected={page === 'recruiter'}
+          aria-controls="overview-panel"
+          className={`workspace-pill workspace-pill--label ${
+            page === 'recruiter' ? 'workspace-pill--active' : ''
+          }`}
           onClick={() => onChangePage('recruiter')}
+          tabIndex={page === 'recruiter' ? 0 : -1}
         >
-          2
+          Overview
         </button>
-        <span className="workspace-pill">3</span>
-      </div>
+        <button
+          type="button"
+          id={terminalId}
+          role="tab"
+          aria-selected={page === 'terminal'}
+          aria-controls="terminal-panel"
+          className={`workspace-pill workspace-pill--label ${
+            page === 'terminal' ? 'workspace-pill--active' : ''
+          }`}
+          onClick={() => onChangePage('terminal')}
+          tabIndex={page === 'terminal' ? 0 : -1}
+          ref={terminalTabRef}
+        >
+          Terminal
+        </button>
+      </nav>
       <div className="desktop-title">▸ PORTFOLIO</div>
       <div className="desktop-path">shishir@arch:~/portfolio</div>
       <div className="desktop-status">
-        <span className="status-dot" /> {STATUS_BADGE} · {clock}
+        <span className="status-dot" aria-hidden="true" /> {STATUS_BADGE} · {clock}
       </div>
     </header>
   )
 }
 
 function DesktopPathBar() {
-  return <div className="desktop-pathbar">~/experience · ~/education · ~/projects · ~/skills</div>
+  return (
+    <div className="desktop-pathbar" id="terminal-panel" role="tabpanel">
+      ~/experience · ~/education · ~/projects · ~/skills
+    </div>
+  )
 }
 
 function formatDesktopClock(date: Date) {

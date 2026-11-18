@@ -3,20 +3,21 @@ import {
   experienceEntries,
   projectEntries,
   skillGroups,
-  STATUS_BADGE,
 } from '../data/portfolio'
+import { SITE, STATUS_BADGE } from '../data/site'
 
 export function ResumeCrawlData() {
   return (
     <div className="sr-only" aria-label="Full resume and portfolio data">
-      <h1>Shishir Sankula — Software Engineering Portfolio</h1>
+      <h1>
+        {SITE.name} — {SITE.title}
+      </h1>
       <p>
-        Software Engineering Student at University of Technology Sydney (UTS), graduating 2026.
-        WAM {educationEntry.wam.toFixed(2)}. Status: {STATUS_BADGE}.
+        {SITE.pitch} Location: {SITE.location}. Status: {STATUS_BADGE}. GPA{' '}
+        {educationEntry.gpa.toFixed(2)}/7.00.
       </p>
       <p>
-        Contact: sankulas99@gmail.com · GitHub: https://github.com/Sankula99 · LinkedIn:
-        https://www.linkedin.com/in/shishirsankula
+        Contact: {SITE.email} · GitHub: {SITE.github} · LinkedIn: {SITE.linkedin}
       </p>
 
       <section aria-label="Experience">
@@ -43,8 +44,12 @@ export function ResumeCrawlData() {
             {educationEntry.degree} — {educationEntry.major}
           </h3>
           <p>
-            {educationEntry.uni} · {educationEntry.period} · WAM {educationEntry.wam.toFixed(2)}
+            {educationEntry.uni} · {educationEntry.period} · GPA{' '}
+            {educationEntry.gpa.toFixed(2)}/7.00
           </p>
+          {educationEntry.awards.length > 0 ? (
+            <p>Awards: {educationEntry.awards.join(', ')}</p>
+          ) : null}
           <ul>
             {educationEntry.highlights.map((highlight) => (
               <li key={highlight}>{highlight}</li>
@@ -56,14 +61,19 @@ export function ResumeCrawlData() {
       <section aria-label="Projects">
         <h2>Projects</h2>
         {projectEntries.map((project) => (
-          <article key={project.name}>
+          <article key={project.slug}>
             <h3>{project.name}</h3>
-            <p>{project.period}</p>
+            <p>
+              {project.role} · {project.period} · {project.status}
+            </p>
+            <p>{project.summary}</p>
+            <p>Problem: {project.problem}</p>
             <ul>
-              {project.bullets.map((bullet) => (
-                <li key={bullet}>{bullet}</li>
+              {project.result.map((item) => (
+                <li key={item}>{item}</li>
               ))}
             </ul>
+            <p>Stack: {project.stack.join(', ')}</p>
           </article>
         ))}
       </section>
@@ -73,7 +83,7 @@ export function ResumeCrawlData() {
         <ul>
           {skillGroups.map((skill) => (
             <li key={skill.label}>
-              {skill.label}: {skill.percent}% — {skill.tags.join(', ')}
+              {skill.label}: {skill.tags.join(', ')}. Used in: {skill.usedIn}
             </li>
           ))}
         </ul>

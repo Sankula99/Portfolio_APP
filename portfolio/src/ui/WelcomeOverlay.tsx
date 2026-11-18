@@ -1,11 +1,15 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useId, useRef, useState, type RefObject } from 'react'
 
 type Props = {
   onDismiss: () => void
+  returnFocusRef?: RefObject<HTMLElement | null>
 }
 
-export function WelcomeOverlay({ onDismiss }: Props) {
+export function WelcomeOverlay({ onDismiss, returnFocusRef }: Props) {
   const [fading, setFading] = useState(false)
+  const dialogRef = useRef<HTMLDivElement>(null)
+  const closeBtnRef = useRef<HTMLButtonElement>(null)
+  const headingId = useId()
 
   useEffect(() => {
     if (!fading) return
@@ -13,87 +17,75 @@ export function WelcomeOverlay({ onDismiss }: Props) {
     return () => window.clearTimeout(id)
   }, [fading, onDismiss])
 
+  useEffect(() => {
+    closeBtnRef.current?.focus()
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.preventDefault()
+        setFading(true)
+        return
+      }
+
+      if (e.key !== 'Tab' || !dialogRef.current) return
+
+      const focusable = dialogRef.current.querySelectorAll<HTMLElement>(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+      )
+      if (focusable.length === 0) return
+
+      const first = focusable[0]
+      const last = focusable[focusable.length - 1]
+
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault()
+        last.focus()
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault()
+        first.focus()
+      }
+    }
+
+    const returnNode = returnFocusRef?.current ?? null
+    window.addEventListener('keydown', onKeyDown)
+    return () => {
+      window.removeEventListener('keydown', onKeyDown)
+      returnNode?.focus()
+    }
+  }, [returnFocusRef])
+
   return (
-    <div className={`welcome-overlay ${fading ? 'welcome-overlay--fading' : ''}`}>
+    <div
+      className={`welcome-overlay ${fading ? 'welcome-overlay--fading' : ''}`}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby={headingId}
+    >
       <div className="welcome-backdrop" />
-      <div className="welcome-card">
-        <div className="welcome-titlebar">
+      <div className="welcome-card" ref={dialogRef}>
+        <div className="welcome-titlebar" aria-hidden="true">
           <span className="win-dot win-dot--red" />
           <span className="win-dot win-dot--amber" />
           <span className="win-dot win-dot--green" />
         </div>
         <div className="welcome-content">
-          <h2 className="welcome-heading">
-            Not a <span className="welcome-heading-accent">Linux</span> person? No problem.
+          <h2 className="welcome-heading" id={headingId}>
+            Terminal view
           </h2>
           <p className="welcome-sub">
-            This portfolio is styled as a Linux desktop environment. Here&apos;s a plain-English
-            guide to reading it:
-          </p>
-          <ul className="welcome-list">
-            <li>
-              <span className="welcome-icon">🗂️</span>
-              <div>
-                <div className="welcome-label">
-                  <strong>ranger</strong> (left panel)
-                </div>
-                <div className="welcome-text">
-                  My <strong>experience browser</strong> — each <code>.md file</code> is a job role
-                  with key achievements inside.
-                </div>
-              </div>
-            </li>
-            <li>
-              <span className="welcome-icon">📝</span>
-              <div>
-                <div className="welcome-label">
-                  <strong>nvim</strong> (top right)
-                </div>
-                <div className="welcome-text">
-                  A code-styled <strong>bio</strong> — showing my name, degree, and what I&apos;m
-                  looking for. Syntax colours are aesthetic.
-                </div>
-              </div>
-            </li>
-            <li>
-              <span className="welcome-icon">📊</span>
-              <div>
-                <div className="welcome-label">
-                  <strong>btop</strong> (bottom left)
-                </div>
-                <div className="welcome-text">
-                  My <strong>skills dashboard</strong> — bars show proficiency, tags show specific
-                  tools within each area.
-                </div>
-              </div>
-            </li>
-            <li>
-              <span className="welcome-icon">✉️</span>
-              <div>
-                <div className="welcome-label">
-                  <strong>contact.md</strong> (bottom right)
-                </div>
-                <div className="welcome-text">
-                  <strong>Contact &amp; resume</strong> — email, resume links, and a message form to
-                  get in touch.
-                </div>
-              </div>
-            </li>
-          </ul>
-          <p className="welcome-recruiter-tip">
-            Not a Linux person? Click workspace <strong>2</strong> at the top left for a clean,
-            quick glance recruiter view!
-          </p>
-          <p className="welcome-footnote">
-            Everything is read-only — scroll and explore. The [ 1 ] [ 2 ] [ 3 ] squares at the top
-            navigate between sections.
+            Left panel browses experience and projects; top-right is the bio; bottom panels cover
+            skills and contact. Switch back to Overview anytime from the top tabs.
           </p>
         </div>
-        <button type="button" className="welcome-button" onClick={() => setFading(true)}>
-          [ got it, let me explore → ]
+        <button
+          type="button"
+          className="welcome-button"
+          ref={closeBtnRef}
+          onClick={() => setFading(true)}
+        >
+          [ got it → ]
         </button>
       </div>
     </div>
   )
 }
-

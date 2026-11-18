@@ -1,34 +1,58 @@
-import { STATUS_BADGE } from '../data/portfolio'
+import { useEffect, useState } from 'react'
+import { educationEntry } from '../data/portfolio'
+import { SITE, STATUS_BADGE } from '../data/site'
+
+// TODO: add public/headshot.jpg (square, at least 400x400)
+const HEADSHOT = '/headshot.jpg'
 
 export function NvimPanel() {
+  const [hasHeadshot, setHasHeadshot] = useState(false)
+
+  useEffect(() => {
+    let cancelled = false
+    const img = new Image()
+    img.onload = () => {
+      if (!cancelled) setHasHeadshot(true)
+    }
+    img.onerror = () => {
+      if (!cancelled) setHasHeadshot(false)
+    }
+    img.src = HEADSHOT
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
   return (
     <section className="panel panel-nvim">
       <header className="panel-titlebar">nvim</header>
       <div className="nvim-body">
         <aside className="nvim-profile">
           <div className="nvim-avatar">
-            <div className="nvim-avatar-inner">SS</div>
+            {hasHeadshot ? (
+              <img
+                src={HEADSHOT}
+                alt={`${SITE.name} headshot`}
+                className="nvim-avatar-img"
+                width={92}
+                height={92}
+              />
+            ) : (
+              <div className="nvim-avatar-inner" aria-hidden="true">
+                SS
+              </div>
+            )}
           </div>
-          <div className="nvim-name">Shishir Sankula</div>
+          <div className="nvim-name">{SITE.name}</div>
           <div className="nvim-role">SE Student · UTS &apos;26</div>
           <div className="nvim-status-badge">
-            <span className="status-dot" /> {STATUS_BADGE}
+            <span className="status-dot" aria-hidden="true" /> {STATUS_BADGE}
           </div>
           <div className="nvim-links">
-            <a
-              href="https://github.com/Sankula99"
-              target="_blank"
-              rel="noreferrer"
-              className="nvim-link-pill"
-            >
+            <a href={SITE.github} target="_blank" rel="noreferrer" className="nvim-link-pill">
               github
             </a>
-            <a
-              href="https://www.linkedin.com/in/shishirsankula"
-              target="_blank"
-              rel="noreferrer"
-              className="nvim-link-pill"
-            >
+            <a href={SITE.linkedin} target="_blank" rel="noreferrer" className="nvim-link-pill">
               linkedin
             </a>
           </div>
@@ -47,15 +71,12 @@ export function NvimPanel() {
                 &nbsp;&nbsp;
                 <span className="nvim-key">name</span>
                 <span className="nvim-op">:</span>{' '}
-                <span className="nvim-str">&quot;Shishir Sankula&quot;</span>,
+                <span className="nvim-str">&quot;{SITE.name}&quot;</span>,
                 {'\n'}
                 &nbsp;&nbsp;
-                <span className="nvim-key">degree</span>
+                <span className="nvim-key">title</span>
                 <span className="nvim-op">:</span>{' '}
-                <span className="nvim-str">
-                  &quot;BE (Hons) Software Engineering&quot;
-                </span>
-                ,
+                <span className="nvim-str">&quot;{SITE.title}&quot;</span>,
                 {'\n'}
                 &nbsp;&nbsp;
                 <span className="nvim-key">university</span>
@@ -63,14 +84,22 @@ export function NvimPanel() {
                 <span className="nvim-str">&quot;UTS · Class of 2026&quot;</span>,
                 {'\n'}
                 &nbsp;&nbsp;
-                <span className="nvim-key">wam</span>
+                <span className="nvim-key">gpa</span>
                 <span className="nvim-op">:</span>{' '}
-                <span className="nvim-num">79.96</span>,
+                <span className="nvim-num">{educationEntry.gpa.toFixed(2)}</span>
+                <span className="nvim-op">/</span>
+                <span className="nvim-num">7.00</span>,
                 {'\n'}
                 &nbsp;&nbsp;
                 <span className="nvim-key">passion</span>
                 <span className="nvim-op">:</span>{' '}
-                <span className="nvim-str">[&quot;Data-Engineering&quot;,&quot;ML&quot;,&quot;NLP&quot;,&quot;Full-Stack&quot;,&quot;Cybersecurity&quot;]</span>
+                <span className="nvim-str nvim-str--wrap">
+                  [&quot;ML&quot;,
+                  {'\n'}
+                  &nbsp;&nbsp;&nbsp;&nbsp;&quot;Data Engineering&quot;,
+                  {'\n'}
+                  &nbsp;&nbsp;&nbsp;&nbsp;&quot;Secure Full-Stack&quot;]
+                </span>
                 ,
                 {'\n'}
                 &nbsp;&nbsp;
@@ -81,15 +110,11 @@ export function NvimPanel() {
                 {'};'}
                 {'\n'}
                 {'\n'}
-                <span className="nvim-comment">
-                  // Building full-stack apps &amp; training transformer models.
-                </span>
+                <span className="nvim-comment">// {SITE.pitch}</span>
                 {'\n'}
-                <span className="nvim-comment">
-                  // Agile team leader · data engineer · ML enthusiast.
+                <span className="nvim-cursor" aria-hidden="true">
+                  █
                 </span>
-                {'\n'}
-                <span className="nvim-cursor">█</span>
               </code>
             </pre>
           </div>
@@ -103,4 +128,3 @@ export function NvimPanel() {
     </section>
   )
 }
-

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 type Props = {
   onComplete: () => void
@@ -14,24 +14,41 @@ const LINES = [
   'Portfolio ready. Launching desktop...',
 ]
 
+const LINE_MS = 150
+
 export function BootScreen({ onComplete }: Props) {
   const [visibleCount, setVisibleCount] = useState(0)
+  const onCompleteRef = useRef(onComplete)
 
   useEffect(() => {
+    onCompleteRef.current = onComplete
+  }, [onComplete])
+
+  useEffect(() => {
+    let cancelled = false
     let index = 0
+    let timeoutId = 0
+
     const step = () => {
+      if (cancelled) return
       index += 1
       setVisibleCount(index)
       if (index === LINES.length) {
-        window.setTimeout(() => onComplete(), 600)
+        timeoutId = window.setTimeout(() => {
+          if (!cancelled) onCompleteRef.current()
+        }, 400)
       } else {
-        window.setTimeout(step, 380)
+        timeoutId = window.setTimeout(step, LINE_MS)
       }
     }
 
-    const id = window.setTimeout(step, 380)
-    return () => window.clearTimeout(id)
-  }, [onComplete])
+    timeoutId = window.setTimeout(step, LINE_MS)
+
+    return () => {
+      cancelled = true
+      window.clearTimeout(timeoutId)
+    }
+  }, [])
 
   return (
     <div className="boot-root">
@@ -55,7 +72,8 @@ export function BootScreen({ onComplete }: Props) {
           </div>
         ))}
       </div>
+
+      <p className="boot-skip-hint">press any key to skip</p>
     </div>
   )
 }
-

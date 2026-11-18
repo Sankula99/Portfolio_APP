@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { SITE } from '../data/site'
 
 export function LoginScreen() {
   const [clock, setClock] = useState<string>(() => formatClock(new Date()))
@@ -12,10 +13,12 @@ export function LoginScreen() {
     <div className="login-root">
       <main className="login-card">
         <div className="login-avatar">
-          <div className="login-avatar-inner">SS</div>
+          <div className="login-avatar-inner" aria-hidden="true">
+            SS
+          </div>
         </div>
 
-        <h1 className="login-name">Shishir Sankula</h1>
+        <h1 className="login-name">{SITE.name}</h1>
 
         <div className="login-username-pill">shishir@portfolio</div>
 
@@ -29,6 +32,8 @@ export function LoginScreen() {
             </span>
           </p>
         </div>
+
+        <p className="login-skip-hint">press any key to skip</p>
       </main>
 
       <footer className="login-footer">

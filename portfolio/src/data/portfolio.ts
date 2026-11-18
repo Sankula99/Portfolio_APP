@@ -1,5 +1,3 @@
-export const STATUS_BADGE = 'seeking internship and graduate roles'
-
 export type ExperienceEntry = {
   file: string
   role: string
@@ -13,59 +11,61 @@ export type EducationEntry = {
   major: string
   uni: string
   period: string
-  wam: number
+  gpa: number
+  awards: string[]
   highlights: string[]
 }
 
 export type ProjectEntry = {
+  slug: string
   name: string
+  role: string
   period: string
-  bullets: string[]
+  status: 'shipped' | 'in-progress'
+  summary: string
+  problem: string
+  approach: string[]
+  result: string[]
+  stack: string[]
+  links: { label: string; href: string }[]
+  featured: boolean
+  skillGroups: string[]
 }
 
 export type SkillGroup = {
   label: string
-  percent: number
   tags: string[]
+  usedIn: string
   variant: 'ice' | 'green' | 'slate' | 'amber'
 }
 
-export type ProcessEntry = {
-  pid: number
-  project: string
-  stack: string
-  state: 'R' | 'S' | 'Z'
-}
-
-export type ToolEntry = {
-  pid: number
-  tool: string
-  user: string
-  state: 'R' | 'S' | 'Z'
+export function isTodoHref(href: string): boolean {
+  return href.startsWith('TODO')
 }
 
 export const experienceEntries: ExperienceEntry[] = [
   {
     file: '2025_OPTIK.md',
     role: 'Software Engineer & Co-Leader',
-    company: 'OPTIK Consultancy · InnerSystems',
+    company: 'OPTIK Consultancy (Internship)',
     period: 'Nov 2025 – Feb 2026',
     bullets: [
-      'Architected and developed a mobile web application MVP using React, Typescript and Supabase',
-      'Co-led a cross-functional team of 5 developers through agile frameworks to meet delivery milestones',
-      'Established workflows for code reviews, version control practices and documentation standards',
-      'Developed BERT-based NLP classification model in Python for automated document classification',
+      'Built a startup client’s MVP web app with React, TypeScript, Supabase and Clerk; designed the PostgreSQL schema and frontend components.',
+      'Implemented authentication and session management with Clerk to control access to user data.',
+      'Gathered requirements directly with the client, demoed each sprint, delivered the MVP on schedule.',
+      'Developed a Python BERT NLP model to classify recorded meetings, achieving 0.98 recall.',
+      'Co-led a team of 5 developers (stand-ups, sprint planning, prioritisation); introduced code review, version control and documentation standards, and ran 1-on-1s.',
     ],
   },
   {
     file: '2025_InviteApp.md',
-    role: 'Software Engineer & Co-Leader',
-    company: 'InviteApp Startup',
+    role: 'Software Engineer & Frontend Lead',
+    company: 'InviteApp Startup (Client Project)',
     period: 'Mar 2025 – Jul 2025',
     bullets: [
-      'Developed a mobile web application MVP using React Native and Typescript and Prisma',
-      'Led frontend architecture and component design for scalability and responsiveness',
-      'Collaborated with backend developers and designers to connect to a centralised database',
+      'Built a React Native, TypeScript, Prisma mobile MVP, delivered a working prototype ahead of the client’s funding round.',
+      'Led frontend architecture and component design for a 6-person team (iOS and Android).',
+      'Integrated REST APIs to sync the dashboard with the centralised backend.',
     ],
   },
 ]
@@ -75,72 +75,270 @@ export const educationEntry: EducationEntry = {
   major: 'Software Engineering',
   uni: 'University of Technology Sydney (UTS)',
   period: 'Feb 2023 – Dec 2026',
-  wam: 79.96,
+  gpa: 6.04,
+  awards: ["Dean's List (2026)"],
   highlights: [
-    'Machine Learning (HD 96%)',
-    'Data Systems (HD 96%)',
-    'Cloud Computing & SaaS (HD 93%)',
-    'Intro to Data Analytics (HD 85%)',
+    'Machine Learning',
+    'Data Systems',
+    'Cloud Computing & SaaS',
+    'Introduction to Data Analytics',
+    'Real-time Operating Systems',
+    'Cybersecurity',
   ],
 }
 
 export const projectEntries: ProjectEntry[] = [
   {
-    name: 'Heart Disease Detection',
-    period: 'Aug 2025 – Nov 2025',
-    bullets: [
-      'XGBoost ML model on UCI Heart Disease dataset (Kaggle)',
-      'Full data preprocessing pipeline in Python',
-      'Feature scaling, encoding, and missing value handling',
+    slug: 'rag-document-assistant',
+    name: 'RAG Document Assistant',
+    role: 'Full-Stack AI Engineer',
+    period: 'Jun 2026 – Present',
+    status: 'in-progress',
+    summary:
+      'Local RAG assistant that answers questions over long PDFs with citations from retrieved chunks.',
+    problem: "Users can't quickly query long PDFs with trustworthy citations.",
+    approach: [
+      'React + FastAPI frontend/backend with Weaviate vector DB and Ollama local LLMs.',
+      'Ingestion pipeline with semantic chunking, embeddings and vector search.',
+      'LLM response generation grounded in retrieved context.',
     ],
+    result: [
+      'TODO add measurable eval metric (e.g. retrieval accuracy) when available; currently exploring prompt engineering, retrieval optimisation and citation quality.',
+    ],
+    stack: ['React', 'FastAPI', 'Weaviate', 'Ollama', 'Python'],
+    links: [
+      { label: 'Repo', href: 'TODO: RAG Document Assistant repo URL' },
+      { label: 'Demo', href: 'TODO: RAG Document Assistant demo URL' },
+    ],
+    featured: true,
+    skillGroups: ['Languages', 'AI & Data', 'Web & Cloud'],
   },
   {
-    name: 'Sales Data Warehouse',
-    period: 'Apr 2025 – Jun 2025',
-    bullets: [
-      'PostgreSQL warehouse with Bronze/Silver multi-layer architecture',
-      'Custom ETL pipelines in SQL',
-      'Data normalisation and schema design for analytics',
+    slug: 'physiological-stress-detection',
+    name: 'Hybrid Deep Learning for Physiological Stress Detection',
+    role: 'ML Engineer',
+    period: 'May 2026 – Present',
+    status: 'in-progress',
+    summary:
+      'CNN+LSTM / CNN+GRU models detecting physiological stress across wearable and lab datasets.',
+    problem: 'Reliable stress detection from physiological signals across datasets is hard to generalise.',
+    approach: [
+      'CNN+LSTM and CNN+GRU architectures on UBFC-Phys, WESAD and a wearable dataset.',
+      'Sliding-window segmentation, 80/20 split, class weighting and early stopping.',
+      'Next: cross-dataset generalisation and quantised/pruned models for Raspberry Pi Zero 2W.',
     ],
+    result: ['On UBFC-Phys: CNN+LSTM 0.80 F1 vs CNN+GRU 0.73 F1.'],
+    stack: ['Python', 'TensorFlow', 'NumPy', 'pandas'],
+    links: [
+      { label: 'Repo', href: 'TODO: Stress Detection repo URL' },
+      { label: 'Demo', href: 'TODO: Stress Detection demo URL' },
+    ],
+    featured: true,
+    skillGroups: ['Languages', 'AI & Data'],
+  },
+  {
+    slug: 'network-attack-defence-labs',
+    name: 'Network Attack and Defence Labs',
+    role: 'Network Security Analyst',
+    period: 'Sep – Oct 2026',
+    status: 'shipped',
+    summary:
+      'Attack–defence lab covering SYN flood, ARP poisoning, session hijacking and DNS poisoning with matched mitigations.',
+    problem: 'Need hands-on mapping of common network attacks to concrete defensive controls.',
+    approach: [
+      'Executed SYN flooding, ARP cache poisoning, TCP session hijacking and DNS cache poisoning in a virtual lab.',
+      'Defended with Snort IDS/IPS rules, iptables policies and Juniper SRX policies, verified against live attack traffic.',
+      'Built a CA and issued X.509 certs with OpenSSL; analysed HTTP credential sniffing.',
+    ],
+    result: [
+      'Mapped each attack to a mitigating control and verified defence effectiveness against live traffic.',
+    ],
+    stack: ['Snort', 'iptables', 'Juniper SRX', 'OpenSSL', 'Wireshark'],
+    links: [
+      { label: 'Repo', href: 'TODO: Network Labs repo URL' },
+      { label: 'Write-up', href: 'TODO: Network Labs write-up URL' },
+    ],
+    featured: true,
+    skillGroups: ['Languages', 'Security & Networking'],
+  },
+  {
+    slug: 'heart-disease-detection',
+    name: 'Heart Disease Detection',
+    role: 'Data Scientist',
+    period: 'Aug – Nov 2025',
+    status: 'shipped',
+    summary: 'XGBoost classifier on the UCI clinical heart disease dataset with a full preprocessing pipeline.',
+    problem: 'Need an accurate clinical risk classifier with transparent precision/recall trade-offs.',
+    approach: [
+      'XGBoost on the UCI clinical dataset.',
+      'Full pandas/NumPy preprocessing pipeline (cleaning, encoding, scaling, imputation).',
+      'Benchmarked configurations on precision/recall trade-offs.',
+    ],
+    result: ['Achieved 0.88 F1 on the held-out evaluation set.'],
+    stack: ['Python', 'XGBoost', 'pandas', 'NumPy', 'Scikit-Learn'],
+    links: [
+      { label: 'Repo', href: 'TODO: Heart Disease Detection repo URL' },
+      { label: 'Demo', href: 'TODO: Heart Disease Detection demo URL' },
+    ],
+    featured: true,
+    skillGroups: ['Languages', 'AI & Data'],
+  },
+  {
+    slug: 'aws-lamp-web-app',
+    name: 'Scalable AWS LAMP Web Application',
+    role: 'System Programmer',
+    period: 'Sep – Nov 2024',
+    status: 'shipped',
+    summary:
+      'Highly available LAMP stack on AWS with multi-AZ networking, autoscaling and Multi-AZ RDS.',
+    problem: 'Need a production-style web architecture with HA/DR across availability zones.',
+    approach: [
+      'Custom VPC across 2 AZs, Auto Scaling 2 to 8 EC2 instances, load balancer, Multi-AZ RDS, custom AMI.',
+      'Security groups allow only HTTP and SSH.',
+      'Architecture write-up justifying each service for HA/DR.',
+    ],
+    result: ['Multi-AZ deployment with autoscaling capacity from 2 to 8 EC2 instances.'],
+    stack: ['AWS', 'EC2', 'RDS', 'VPC', 'Linux'],
+    links: [
+      { label: 'Repo', href: 'TODO: AWS LAMP repo URL' },
+      { label: 'Write-up', href: 'TODO: AWS LAMP write-up URL' },
+    ],
+    featured: false,
+    skillGroups: ['Languages', 'Web & Cloud'],
+  },
+  {
+    slug: 'video-game-sales-insights',
+    name: 'Video Game Sales and Consumer Insights System',
+    role: 'Data Analyst',
+    period: 'Apr – May 2025',
+    status: 'shipped',
+    summary:
+      'Power BI dashboards over a star-schema Azure SQL database with DirectQuery for sales insights.',
+    problem: 'Stakeholders needed live sales and consumer insights without brittle extracts.',
+    approach: [
+      'Power BI dashboards over a star-schema Azure SQL DB via DirectQuery.',
+      'Bridge tables for many-to-many relationships; fixed a firewall connection failure by whitelisting the IP.',
+      'Wrote architecture, task-flow diagrams and requirements for a 4-person team.',
+    ],
+    result: ['Live DirectQuery dashboards with resolved Azure SQL connectivity for the team.'],
+    stack: ['Power BI', 'Azure SQL', 'DirectQuery'],
+    links: [
+      { label: 'Repo', href: 'TODO: Video Game Sales repo URL' },
+      { label: 'Dashboard', href: 'TODO: Video Game Sales dashboard URL' },
+    ],
+    featured: false,
+    skillGroups: ['Languages', 'AI & Data', 'Web & Cloud'],
+  },
+  {
+    slug: 'cpu-scheduler-simulator',
+    name: 'CPU Scheduler & Page Replacement Simulator',
+    role: 'System Programmer',
+    period: 'Apr – Jun 2026',
+    status: 'shipped',
+    summary:
+      'Round Robin scheduler and FIFO page-replacement simulator with IPC via named pipes and semaphores.',
+    problem: 'Need a controllable simulator to measure scheduling and paging behaviour.',
+    approach: [
+      'Round Robin scheduler with configurable quantum (waiting/turnaround times for a 7-process workload).',
+      'Two-thread pipeline over a named pipe with semaphores.',
+      'FIFO page-replacement simulator.',
+    ],
+    result: [
+      'Measured waiting and turnaround times across a 7-process Round Robin workload.',
+    ],
+    stack: ['C/C++', 'IPC', 'Semaphores'],
+    links: [
+      { label: 'Repo', href: 'TODO: CPU Scheduler repo URL' },
+      { label: 'Write-up', href: 'TODO: CPU Scheduler write-up URL' },
+    ],
+    featured: false,
+    skillGroups: ['Languages'],
+  },
+  {
+    slug: 'portfolio-site',
+    name: 'This portfolio site',
+    role: 'Full-Stack Engineer',
+    period: '2025 – Present',
+    status: 'in-progress',
+    summary:
+      'Terminal-themed React 19 + TypeScript + Vite portfolio with a recruiter Overview and Terminal view.',
+    problem: 'Need a distinctive portfolio that still converts for recruiters who want a quick skim.',
+    approach: [
+      'React 19, TypeScript, Vite SPA with Overview as the default view.',
+      'Terminal/Linux visual identity with accessible recruiter content and case-study projects.',
+    ],
+    result: ['Shippable Overview-first portfolio with skippable intro and live contact form.'],
+    stack: ['React 19', 'TypeScript', 'Vite'],
+    links: [
+      { label: 'Repo', href: 'TODO: Portfolio site repo URL' },
+      { label: 'Live', href: 'TODO: Portfolio site live URL' },
+    ],
+    featured: false,
+    skillGroups: ['Languages', 'Web & Cloud'],
   },
 ]
 
 export const skillGroups: SkillGroup[] = [
   {
-    label: 'Python / ML',
-    percent: 96,
-    tags: ['BERT', 'XGBoost', 'Scikit-Learn', 'Pandas'],
+    label: 'Languages',
+    tags: ['Python', 'TypeScript', 'Java', 'C/C++', 'SQL', 'HTML/CSS'],
+    usedIn: 'OPTIK BERT classifier, Stress Detection, Heart Disease, CPU Simulator',
     variant: 'green',
   },
   {
-    label: 'TypeScript / React',
-    percent: 90,
-    tags: ['React Native', 'Node.js', 'HTML/CSS'],
+    label: 'AI & Data',
+    tags: [
+      'BERT',
+      'RAG/LLMs (Ollama)',
+      'XGBoost',
+      'Scikit-Learn',
+      'TensorFlow',
+      'pandas',
+      'NumPy',
+      'Power BI',
+    ],
+    usedIn: 'OPTIK BERT classifier, Heart Disease, Stress Detection, RAG Assistant',
     variant: 'ice',
   },
   {
-    label: 'Data / SQL',
-    percent: 96,
-    tags: ['PostgreSQL', 'ETL', 'Supabase'],
+    label: 'Security & Networking',
+    tags: [
+      'Snort',
+      'iptables',
+      'Juniper SRX',
+      'Wireshark',
+      'OpenSSL/PKI',
+      'John the Ripper',
+    ],
+    usedIn: 'Network Attack and Defence Labs',
     variant: 'slate',
   },
   {
-    label: 'Cloud & DevOps',
-    percent: 75,
-    tags: ['AWS', 'Git', 'Figma', 'Power BI'],
+    label: 'Web & Cloud',
+    tags: [
+      'React',
+      'React Native',
+      'FastAPI',
+      'Prisma',
+      'Supabase',
+      'PostgreSQL',
+      'AWS',
+      'Docker',
+      'Git/GitHub',
+    ],
+    usedIn: 'OPTIK MVP, InviteApp, AWS LAMP, this portfolio',
     variant: 'amber',
   },
 ]
 
-export const projectProcesses: ProcessEntry[] = [
-  { pid: 2401, project: 'Heart Disease ML', stack: 'XGBoost·Python', state: 'R' },
-  { pid: 2402, project: 'Sales Warehouse', stack: 'PostgreSQL·ETL', state: 'R' },
-]
+export function featuredProjects(): ProjectEntry[] {
+  return projectEntries.filter((p) => p.featured)
+}
 
-export const toolsRunning: ToolEntry[] = [
-  { pid: 1001, tool: 'git', user: 'shishir', state: 'R' },
-  { pid: 1002, tool: 'figma', user: 'shishir', state: 'S' },
-  { pid: 1003, tool: 'aws-cli', user: 'shishir', state: 'S' },
-  { pid: 1004, tool: 'trello', user: 'shishir', state: 'Z' },
-]
+export function inProgressProjects(): ProjectEntry[] {
+  return projectEntries.filter((p) => p.status === 'in-progress')
+}
 
+export function projectCountForSkill(label: string): number {
+  return projectEntries.filter((p) => p.skillGroups.includes(label)).length
+}
