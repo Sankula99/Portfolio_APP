@@ -6,7 +6,7 @@ import {
   projectEntries,
   skillGroups,
 } from '../data/portfolio'
-import { NowBuildingStrip, ProjectsPanel } from './ProjectsPanel'
+import { NowBuildingStrip } from './ProjectsPanel'
 
 type Tab = 'experience' | 'education' | 'projects' | 'skills'
 
@@ -14,7 +14,11 @@ const TABS: Tab[] = ['experience', 'education', 'projects', 'skills']
 
 const HIGHLIGHTS = ['React Native', 'React', 'TypeScript', 'BERT', 'NLP', 'Clerk', 'Supabase'] as const
 
-export function RangerPanel() {
+type Props = {
+  onViewProjectDetails?: (slug: string) => void
+}
+
+export function RangerPanel({ onViewProjectDetails }: Props) {
   const [active, setActive] = useState<Tab>('experience')
   const tablistRef = useRef<HTMLDivElement>(null)
   const baseId = useId()
@@ -76,7 +80,7 @@ export function RangerPanel() {
             {active === 'experience' && <ExperienceView />}
             {active === 'education' && <EducationView />}
             {active === 'projects' && (
-              <ProjectsPanel projects={projectEntries} compact title="projects/" />
+              <ProjectsTitlesView onViewDetails={onViewProjectDetails} />
             )}
             {active === 'skills' && <SkillsView />}
           </div>
@@ -84,6 +88,32 @@ export function RangerPanel() {
         <NowBuildingStrip projects={building} />
       </div>
     </section>
+  )
+}
+
+function ProjectsTitlesView({
+  onViewDetails,
+}: {
+  onViewDetails?: (slug: string) => void
+}) {
+  return (
+    <div className="ranger-list">
+      {projectEntries.map((project) => (
+        <article key={project.slug} className="ranger-entry">
+          <div className="ranger-file">{project.name}</div>
+          <div className="ranger-meta">
+            {project.role} · {project.period}
+          </div>
+          <button
+            type="button"
+            className="ranger-view-details"
+            onClick={() => onViewDetails?.(project.slug)}
+          >
+            [ view details ]
+          </button>
+        </article>
+      ))}
+    </div>
   )
 }
 

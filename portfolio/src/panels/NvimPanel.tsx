@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
 import { educationEntry } from '../data/portfolio'
-import { SITE, STATUS_BADGE } from '../data/site'
+import { SITE, wrapPitchLines } from '../data/site'
 
-// TODO: add public/headshot.jpg (square, at least 400x400)
 const HEADSHOT = '/headshot.jpg'
+const pitchLines = wrapPitchLines(SITE.pitch, 66)
 
 export function NvimPanel() {
   const [hasHeadshot, setHasHeadshot] = useState(false)
@@ -46,7 +46,7 @@ export function NvimPanel() {
           <div className="nvim-name">{SITE.name}</div>
           <div className="nvim-role">SE Student · UTS &apos;26</div>
           <div className="nvim-status-badge">
-            <span className="status-dot" aria-hidden="true" /> {STATUS_BADGE}
+            <span className="status-dot" aria-hidden="true" /> {SITE.status}
           </div>
           <div className="nvim-links">
             <a href={SITE.github} target="_blank" rel="noreferrer" className="nvim-link-pill">
@@ -105,13 +105,17 @@ export function NvimPanel() {
                 &nbsp;&nbsp;
                 <span className="nvim-key">status</span>
                 <span className="nvim-op">:</span>{' '}
-                <span className="nvim-str">&quot;Seeking Internship and Graduate Roles&quot;</span>
+                <span className="nvim-str">&quot;{SITE.status}&quot;</span>
                 {'\n'}
                 {'};'}
                 {'\n'}
                 {'\n'}
-                <span className="nvim-comment">// {SITE.pitch}</span>
-                {'\n'}
+                {pitchLines.map((line) => (
+                  <span key={line} className="nvim-comment">
+                    {`// ${line}`}
+                    {'\n'}
+                  </span>
+                ))}
                 <span className="nvim-cursor" aria-hidden="true">
                   █
                 </span>

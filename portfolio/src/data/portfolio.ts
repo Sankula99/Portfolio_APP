@@ -43,6 +43,10 @@ export function isTodoHref(href: string): boolean {
   return href.startsWith('TODO')
 }
 
+export function isTodoText(text: string): boolean {
+  return text.startsWith('TODO')
+}
+
 export const experienceEntries: ExperienceEntry[] = [
   {
     file: '2025_OPTIK.md',
@@ -103,7 +107,7 @@ export const projectEntries: ProjectEntry[] = [
       'LLM response generation grounded in retrieved context.',
     ],
     result: [
-      'TODO add measurable eval metric (e.g. retrieval accuracy) when available; currently exploring prompt engineering, retrieval optimisation and citation quality.',
+      'Currently exploring prompt engineering, retrieval optimisation and citation quality.',
     ],
     stack: ['React', 'FastAPI', 'Weaviate', 'Ollama', 'Python'],
     links: [
@@ -115,23 +119,32 @@ export const projectEntries: ProjectEntry[] = [
   },
   {
     slug: 'physiological-stress-detection',
-    name: 'Hybrid Deep Learning for Physiological Stress Detection',
+    name: 'Hybrid Deep Learning Fusion for Physiological Stress Detection',
     role: 'ML Engineer',
     period: 'May 2026 – Present',
-    status: 'in-progress',
+    status: 'shipped',
     summary:
-      'CNN+LSTM / CNN+GRU models detecting physiological stress across wearable and lab datasets.',
-    problem: 'Reliable stress detection from physiological signals across datasets is hard to generalise.',
+      'Cross-dataset LODO evaluation of dual-stream CNN–recurrent fusion on BVP and EDA, with pruned INT8 deployment on a Raspberry Pi Zero 2W.',
+    problem:
+      'Wearable stress models overfit the dataset they were trained on and degrade under cross-dataset transfer, while edge devices need compressed models that stay accurate and fast.',
     approach: [
-      'CNN+LSTM and CNN+GRU architectures on UBFC-Phys, WESAD and a wearable dataset.',
-      'Sliding-window segmentation, 80/20 split, class weighting and early stopping.',
-      'Next: cross-dataset generalisation and quantised/pruned models for Raspberry Pi Zero 2W.',
+      'Leave-one-dataset-out across UBFC-Phys, Wearable, and WESAD (Empatica E4 BVP + EDA); 60/120/200 s windows with 50% overlap; 108 training runs.',
+      'Compared CNN-only, CNN+LSTM, CNN+GRU, and CNN+LSTM+GRU dual-stream fusion with a shared classification head.',
+      'Pruned (50% sparsity) and INT8-quantised the best model and deployed TensorFlow Lite on a Raspberry Pi Zero 2W.',
     ],
-    result: ['On UBFC-Phys: CNN+LSTM 0.80 F1 vs CNN+GRU 0.73 F1.'],
-    stack: ['Python', 'TensorFlow', 'NumPy', 'pandas'],
+    result: [
+      'CNN+LSTM+GRU highest mean macro F1 (0.69); WESAD holdout 0.890 ± 0.009 at 60 s.',
+      'Held-out dataset dominated performance: mean macro F1 0.66 / 0.47 / 0.77 (UBFC-Phys / Wearable / WESAD).',
+      'On-device: 6.80 ms mean latency; macro F1 0.787 after prune+INT8 (from 0.890); stress-class F1 0.836.',
+    ],
+    stack: ['Python', 'TensorFlow', 'TensorFlow Lite', 'NumPy', 'pandas', 'Raspberry Pi'],
     links: [
       { label: 'Repo', href: 'TODO: Stress Detection repo URL' },
       { label: 'Demo', href: 'TODO: Stress Detection demo URL' },
+      {
+        label: 'Write-up',
+        href: '/Hybrid_Deep_Learning_Stress_Detection.pdf',
+      },
     ],
     featured: true,
     skillGroups: ['Languages', 'AI & Data'],
@@ -267,7 +280,11 @@ export const projectEntries: ProjectEntry[] = [
       'React 19, TypeScript, Vite SPA with Overview as the default view.',
       'Terminal/Linux visual identity with accessible recruiter content and case-study projects.',
     ],
-    result: ['Shippable Overview-first portfolio with skippable intro and live contact form.'],
+    // TODO: replace with a measured metric (e.g. Lighthouse score) once available
+    result: [
+      'TODO: measurable result (e.g. Lighthouse performance score once measured)',
+      'Overview-first React 19 portfolio with skippable intro under 3s on first visit.',
+    ],
     stack: ['React 19', 'TypeScript', 'Vite'],
     links: [
       { label: 'Repo', href: 'TODO: Portfolio site repo URL' },

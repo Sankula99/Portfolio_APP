@@ -1,6 +1,6 @@
 import { useId, useState } from 'react'
 import resumePdf from '../../Shishir_Sankula_Resume.pdf'
-import { SITE } from '../data/site'
+import { isTodoValue, SITE } from '../data/site'
 
 type FormStatus =
   | { type: 'idle' }
@@ -13,6 +13,14 @@ type Props = {
 }
 
 const FORMSPREE_ID = import.meta.env.VITE_FORMSPREE_ID as string | undefined
+
+function githubHandle(url: string): string {
+  return url.replace(/\/$/, '').split('/').pop() ?? url
+}
+
+function linkedinHandle(url: string): string {
+  return url.replace(/\/$/, '').split('/').pop() ?? url
+}
 
 export function ContactPanel({ embedded = false }: Props) {
   const nameId = useId()
@@ -27,6 +35,8 @@ export function ContactPanel({ embedded = false }: Props) {
   const [status, setStatus] = useState<FormStatus>({ type: 'idle' })
 
   const formEnabled = Boolean(FORMSPREE_ID && FORMSPREE_ID.trim())
+  const availability =
+    SITE.availability && !isTodoValue(SITE.availability) ? SITE.availability : null
 
   const handleSubmit = async () => {
     if (!formEnabled || !FORMSPREE_ID) return
@@ -73,117 +83,152 @@ export function ContactPanel({ embedded = false }: Props) {
     }
   }
 
+  const subtitle = [
+    'Open to internship and graduate roles',
+    SITE.location,
+    availability,
+  ]
+    .filter(Boolean)
+    .join(' · ')
+
   const body = (
     <div className="contact-panel-body">
-      <h2 className="contact-panel-heading">Contact Me</h2>
-      <div className="contact-panel-top">
-        <a href={`mailto:${SITE.email}`} className="contact-panel-email">
-          {SITE.email}
-        </a>
-        <a href={resumePdf} className="contact-panel-btn" download>
-          [ DOWNLOAD RESUME ]
-        </a>
-        <a
-          href={resumePdf}
-          className="contact-panel-btn contact-panel-btn--secondary"
-          target="_blank"
-          rel="noreferrer"
-        >
-          [ VIEW RESUME ]
-        </a>
-        <a href={SITE.github} target="_blank" rel="noreferrer" className="nvim-link-pill">
-          github
-        </a>
-        <a href={SITE.linkedin} target="_blank" rel="noreferrer" className="nvim-link-pill">
-          linkedin
-        </a>
+      <div className="contact-panel-header">
+        <h2 className="contact-panel-heading">Contact Me</h2>
+        <p className="contact-panel-subtitle">{subtitle}</p>
       </div>
 
-      {formEnabled ? (
-        <div className="contact-panel-form">
-          <div className="contact-panel-field">
-            <label className="contact-panel-label" htmlFor={nameId}>
-              Name
-            </label>
-            <input
-              id={nameId}
-              type="text"
-              className="contact-panel-input"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              autoComplete="name"
-              required
-              disabled={status.type === 'sending'}
-            />
-          </div>
-          <div className="contact-panel-field">
-            <label className="contact-panel-label" htmlFor={emailId}>
-              Email
-            </label>
-            <input
-              id={emailId}
-              type="email"
-              className="contact-panel-input"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              autoComplete="email"
-              required
-              disabled={status.type === 'sending'}
-            />
-          </div>
-          <div className="contact-panel-field">
-            <label className="contact-panel-label" htmlFor={subjectId}>
-              Subject
-            </label>
-            <input
-              id={subjectId}
-              type="text"
-              className="contact-panel-input"
-              value={subject}
-              onChange={(e) => setSubject(e.target.value)}
-              autoComplete="off"
-              required
-              disabled={status.type === 'sending'}
-            />
-          </div>
-          <div className="contact-panel-field contact-panel-field--message">
-            <label className="contact-panel-label" htmlFor={messageId}>
-              Message
-            </label>
-            <textarea
-              id={messageId}
-              className="contact-panel-textarea"
-              rows={3}
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              required
-              disabled={status.type === 'sending'}
-            />
-          </div>
-          <button
-            type="button"
-            className="contact-panel-submit"
-            onClick={() => void handleSubmit()}
-            disabled={status.type === 'sending'}
-          >
-            {status.type === 'sending' ? '[ SENDING… ]' : '[ SEND MESSAGE ]'}
-          </button>
-          {(status.type === 'success' || status.type === 'error') && (
-            <p
-              className={`contact-panel-status contact-panel-status--${status.type}`}
-              role="status"
-              aria-live="polite"
-            >
-              {status.message}
-            </p>
-          )}
+      <div className="contact-panel-links" role="list">
+        <div className="contact-kv" role="listitem">
+          <span className="contact-kv-key">email</span>
+          <a href={`mailto:${SITE.email}`} className="contact-kv-value">
+            {SITE.email}
+          </a>
         </div>
-      ) : (
-        <p className="contact-panel-fallback">
-          Prefer email? Write to{' '}
-          <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
+        <div className="contact-kv" role="listitem">
+          <span className="contact-kv-key">resume</span>
+          <div className="contact-kv-actions">
+            <a href={resumePdf} className="contact-panel-btn" download>
+              [ DOWNLOAD ]
+            </a>
+            <a
+              href={resumePdf}
+              className="contact-panel-btn contact-panel-btn--secondary"
+              target="_blank"
+              rel="noreferrer"
+            >
+              [ VIEW ]
+            </a>
+          </div>
+        </div>
+        <div className="contact-kv" role="listitem">
+          <span className="contact-kv-key">github</span>
+          <a href={SITE.github} target="_blank" rel="noreferrer" className="contact-kv-value">
+            {githubHandle(SITE.github)}
+          </a>
+        </div>
+        <div className="contact-kv" role="listitem">
+          <span className="contact-kv-key">linkedin</span>
+          <a href={SITE.linkedin} target="_blank" rel="noreferrer" className="contact-kv-value">
+            {linkedinHandle(SITE.linkedin)}
+          </a>
+        </div>
+      </div>
+
+      <div className="contact-panel-message">
+        <p className="contact-panel-prompt" aria-hidden="true">
+          $ send a message
         </p>
-      )}
+
+        {formEnabled ? (
+          <div className="contact-panel-form">
+            <div className="contact-panel-row">
+              <div className="contact-panel-field">
+                <label className="contact-panel-label" htmlFor={nameId}>
+                  Name
+                </label>
+                <input
+                  id={nameId}
+                  type="text"
+                  className="contact-panel-input"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  autoComplete="name"
+                  required
+                  disabled={status.type === 'sending'}
+                />
+              </div>
+              <div className="contact-panel-field">
+                <label className="contact-panel-label" htmlFor={subjectId}>
+                  Subject
+                </label>
+                <input
+                  id={subjectId}
+                  type="text"
+                  className="contact-panel-input"
+                  value={subject}
+                  onChange={(e) => setSubject(e.target.value)}
+                  autoComplete="off"
+                  required
+                  disabled={status.type === 'sending'}
+                />
+              </div>
+            </div>
+
+            <div className="contact-panel-field">
+              <label className="contact-panel-label" htmlFor={emailId}>
+                Email
+              </label>
+              <input
+                id={emailId}
+                type="email"
+                className="contact-panel-input"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                autoComplete="email"
+                required
+                disabled={status.type === 'sending'}
+              />
+            </div>
+
+            <div className="contact-panel-field">
+              <label className="contact-panel-label" htmlFor={messageId}>
+                Message
+              </label>
+              <textarea
+                id={messageId}
+                className="contact-panel-textarea"
+                rows={3}
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                required
+                disabled={status.type === 'sending'}
+              />
+            </div>
+
+            <button
+              type="button"
+              className="contact-panel-submit"
+              onClick={() => void handleSubmit()}
+              disabled={status.type === 'sending'}
+            >
+              {status.type === 'sending' ? '[ SENDING… ]' : '[ SEND MESSAGE ]'}
+            </button>
+
+            {(status.type === 'success' || status.type === 'error') && (
+              <p
+                className={`contact-panel-status contact-panel-status--${status.type}`}
+                role="status"
+                aria-live="polite"
+              >
+                {status.message}
+              </p>
+            )}
+          </div>
+        ) : (
+          <p className="contact-panel-fallback">Form unavailable. Email me directly.</p>
+        )}
+      </div>
     </div>
   )
 

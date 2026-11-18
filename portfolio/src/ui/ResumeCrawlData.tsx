@@ -1,10 +1,11 @@
 import {
   educationEntry,
   experienceEntries,
+  isTodoText,
   projectEntries,
   skillGroups,
 } from '../data/portfolio'
-import { SITE, STATUS_BADGE } from '../data/site'
+import { SITE } from '../data/site'
 
 export function ResumeCrawlData() {
   return (
@@ -13,7 +14,7 @@ export function ResumeCrawlData() {
         {SITE.name} — {SITE.title}
       </h1>
       <p>
-        {SITE.pitch} Location: {SITE.location}. Status: {STATUS_BADGE}. GPA{' '}
+        {SITE.pitch} Location: {SITE.location}. Status: {SITE.status}. GPA{' '}
         {educationEntry.gpa.toFixed(2)}/7.00.
       </p>
       <p>
@@ -69,9 +70,11 @@ export function ResumeCrawlData() {
             <p>{project.summary}</p>
             <p>Problem: {project.problem}</p>
             <ul>
-              {project.result.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
+              {project.result
+                .filter((item) => !isTodoText(item))
+                .map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
             </ul>
             <p>Stack: {project.stack.join(', ')}</p>
           </article>

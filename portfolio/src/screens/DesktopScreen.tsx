@@ -14,7 +14,9 @@ import { ContactPanel } from '../panels/ContactPanel'
 import { RecruiterPanel } from '../panels/RecruiterPanel'
 import { WelcomeOverlay } from '../ui/WelcomeOverlay'
 import { ResumeCrawlData } from '../ui/ResumeCrawlData'
-import { STATUS_BADGE } from '../data/site'
+import { projectEntries } from '../data/portfolio'
+import { SITE } from '../data/site'
+import { ProjectsPanel } from '../panels/ProjectsPanel'
 
 type DesktopPage = 'recruiter' | 'terminal'
 
@@ -40,8 +42,10 @@ export function DesktopScreen() {
   const [clock, setClock] = useState<string>(() => formatDesktopClock(new Date()))
   const [page, setPage] = useState<DesktopPage>('recruiter')
   const [showOverlay, setShowOverlay] = useState(false)
+  const [expandProjectSlug, setExpandProjectSlug] = useState<string | null>(null)
   const terminalTabRef = useRef<HTMLButtonElement>(null)
   const overlayTimerRef = useRef<number | null>(null)
+  const projectsSectionRef = useRef<HTMLElement>(null)
 
   useEffect(() => {
     const id = window.setInterval(() => setClock(formatDesktopClock(new Date())), 1000)
@@ -77,6 +81,13 @@ export function DesktopScreen() {
     terminalTabRef.current?.focus()
   }, [])
 
+  const viewProjectDetails = useCallback((slug: string) => {
+    setExpandProjectSlug(slug)
+    window.requestAnimationFrame(() => {
+      projectsSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    })
+  }, [])
+
   return (
     <div className="desktop-root">
       <ResumeCrawlData />
@@ -94,7 +105,7 @@ export function DesktopScreen() {
           <DesktopPathBar />
           <div className="desktop-grid">
             <div className="desktop-col-left desktop-col-left--fixed">
-              <RangerPanel />
+              <RangerPanel onViewProjectDetails={viewProjectDetails} />
             </div>
             <div className="desktop-col-right">
               <NvimPanel />
@@ -104,6 +115,18 @@ export function DesktopScreen() {
               </div>
             </div>
           </div>
+
+          <section
+            className="panel terminal-projects"
+            id="terminal-projects"
+            ref={projectsSectionRef}
+            aria-label="Project case studies"
+          >
+            <header className="panel-titlebar">projects.md</header>
+            <div className="terminal-projects-body">
+              <ProjectsPanel projects={projectEntries} expandSlug={expandProjectSlug} />
+            </div>
+          </section>
 
           {showOverlay ? (
             <WelcomeOverlay
@@ -177,7 +200,7 @@ function DesktopTopBar({ clock, page, onChangePage, terminalTabRef }: TopBarProp
       <div className="desktop-title">▸ PORTFOLIO</div>
       <div className="desktop-path">shishir@arch:~/portfolio</div>
       <div className="desktop-status">
-        <span className="status-dot" aria-hidden="true" /> {STATUS_BADGE} · {clock}
+        <span className="status-dot" aria-hidden="true" /> {SITE.status} · {clock}
       </div>
     </header>
   )

@@ -10,6 +10,9 @@ export function BtopPanel() {
     <section className="panel panel-btop">
       <header className="panel-titlebar">btop</header>
       <div className="btop-body">
+        <p className="btop-caption">
+          Bars show the number of projects using each skill group.
+        </p>
         {skillGroups.map((skill, index) => {
           const count = projectCountForSkill(skill.label)
           const widthPct = Math.round((count / maxCount) * 100)

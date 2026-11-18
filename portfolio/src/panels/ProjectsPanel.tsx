@@ -1,33 +1,48 @@
 import { useId, useState } from 'react'
-import { isTodoHref, type ProjectEntry } from '../data/portfolio'
+import { isTodoHref, isTodoText, type ProjectEntry } from '../data/portfolio'
 
 type Props = {
   projects: ProjectEntry[]
   title?: string
   compact?: boolean
+  expandSlug?: string | null
 }
 
-export function ProjectsPanel({ projects, title, compact = false }: Props) {
+export function ProjectsPanel({ projects, title, compact = false, expandSlug = null }: Props) {
   return (
     <div className={`projects-panel ${compact ? 'projects-panel--compact' : ''}`}>
       {title ? <h2 className="projects-panel-title">{title}</h2> : null}
       <div className="projects-list">
-        {projects.map((project) => (
-          <ProjectCard key={project.slug} project={project} />
-        ))}
+        {projects.map((project) => {
+          const shouldExpand = expandSlug === project.slug
+          return (
+            <ProjectCard
+              key={`${project.slug}-${shouldExpand ? 'open' : 'idle'}`}
+              project={project}
+              initiallyOpen={shouldExpand}
+            />
+          )
+        })}
       </div>
     </div>
   )
 }
 
-function ProjectCard({ project }: { project: ProjectEntry }) {
-  const [open, setOpen] = useState(false)
+function ProjectCard({
+  project,
+  initiallyOpen = false,
+}: {
+  project: ProjectEntry
+  initiallyOpen?: boolean
+}) {
+  const [open, setOpen] = useState(initiallyOpen)
   const regionId = useId()
-  const keyResult = project.result[0] ?? ''
+  const visibleResults = project.result.filter((r) => !isTodoText(r))
+  const keyResult = visibleResults[0] ?? ''
   const visibleLinks = project.links.filter((l) => !isTodoHref(l.href))
 
   return (
-    <article className="project-card">
+    <article className="project-card" id={`project-${project.slug}`}>
       <button
         type="button"
         className="project-card-toggle"
@@ -75,16 +90,18 @@ function ProjectCard({ project }: { project: ProjectEntry }) {
             ))}
           </ul>
         </section>
-        <section>
-          <h4>Result</h4>
-          <ul>
-            {project.result.map((item) => (
-              <li key={item} className="project-result-item">
-                {item}
-              </li>
-            ))}
-          </ul>
-        </section>
+        {visibleResults.length > 0 ? (
+          <section>
+            <h4>Result</h4>
+            <ul>
+              {visibleResults.map((item) => (
+                <li key={item} className="project-result-item">
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </section>
+        ) : null}
         <section>
           <h4>Stack</h4>
           <div className="project-card-stack">

@@ -5,11 +5,10 @@ import {
   experienceEntries,
   featuredProjects,
   inProgressProjects,
-  isTodoHref,
   projectEntries,
   skillGroups,
 } from '../data/portfolio'
-import { isTodoValue, SITE, STATUS_BADGE } from '../data/site'
+import { isTodoValue, SITE } from '../data/site'
 import { ContactPanel } from './ContactPanel'
 import { NowBuildingStrip, ProjectsPanel } from './ProjectsPanel'
 
@@ -29,7 +28,7 @@ export function RecruiterPanel({ onOpenTerminal }: Props) {
         <header className="panel-titlebar">overview.md</header>
         <div className="overview-hero-body">
           <p className="overview-eyebrow">
-            <span className="status-dot" aria-hidden="true" /> {STATUS_BADGE}
+            <span className="status-dot" aria-hidden="true" /> {SITE.status}
           </p>
           <h1 className="overview-name">{SITE.name}</h1>
           <p className="overview-title">{SITE.title}</p>
@@ -152,15 +151,6 @@ export function RecruiterPanel({ onOpenTerminal }: Props) {
         </p>
       ) : null}
 
-      {/* Hide TODO-only featured links note for crawlers via data */}
-      <span className="sr-only">
-        Project links pending:{' '}
-        {projectEntries
-          .flatMap((p) => p.links)
-          .filter((l) => isTodoHref(l.href))
-          .map((l) => l.href)
-          .join('; ')}
-      </span>
     </main>
   )
 }
