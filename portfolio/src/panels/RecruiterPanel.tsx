@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import resumePdf from '../../Shishir_Sankula_Resume.pdf'
 import {
   educationEntry,
   experienceEntries,
@@ -12,8 +11,16 @@ import { isTodoValue, SITE } from '../data/site'
 import { ContactPanel } from './ContactPanel'
 import { NowBuildingStrip, ProjectsPanel } from './ProjectsPanel'
 
+const RESUME_HREF = '/Shishir_Sankula_Resume.pdf'
+const OWL_ALT =
+  'Illustration of a steampunk owl in a top hat holding a laptop, the portfolio mascot'
+
 type Props = {
   onOpenTerminal?: () => void
+}
+
+function formatAwards(awards: string[]): string {
+  return awards.map((a) => a.replace(/\((\d+)\)/, '$1')).join(' · ')
 }
 
 export function RecruiterPanel({ onOpenTerminal }: Props) {
@@ -21,35 +28,54 @@ export function RecruiterPanel({ onOpenTerminal }: Props) {
   const featured = featuredProjects()
   const building = inProgressProjects().filter((p) => p.slug !== 'portfolio-site')
   const projectsToShow = showAllProjects ? projectEntries : featured
+  const awardsLine = formatAwards(educationEntry.awards)
 
   return (
-    <main className="overview-root" id="overview-panel" role="tabpanel">
+    <main className="overview-root" id="overview-panel">
       <section className="overview-hero panel">
         <header className="panel-titlebar">overview.md</header>
         <div className="overview-hero-body">
-          <p className="overview-eyebrow">
-            <span className="status-dot" aria-hidden="true" /> {SITE.status}
-          </p>
-          <h1 className="overview-name">{SITE.name}</h1>
-          <p className="overview-title">{SITE.title}</p>
-          <p className="overview-pitch">{SITE.pitch}</p>
-          <p className="overview-meta">
-            {SITE.location}
-            {!isTodoValue(SITE.availability) ? ` · ${SITE.availability}` : ''}
-          </p>
-          <div className="overview-cta">
-            <a href={resumePdf} className="overview-btn overview-btn--primary" download>
-              [ Download resume ]
-            </a>
-            <a href={`mailto:${SITE.email}`} className="overview-btn">
-              [ Email me ]
-            </a>
-            <a href={SITE.github} target="_blank" rel="noreferrer" className="overview-btn">
-              [ GitHub ]
-            </a>
-            <a href={SITE.linkedin} target="_blank" rel="noreferrer" className="overview-btn">
-              [ LinkedIn ]
-            </a>
+          <div className="overview-hero-layout">
+            <div className="overview-hero-copy">
+              <p className="overview-eyebrow">
+                <span className="status-dot" aria-hidden="true" /> {SITE.status}
+              </p>
+              <h1 className="overview-name">{SITE.name}</h1>
+              <p className="overview-title">{SITE.title}</p>
+              <p className="overview-pitch">{SITE.pitch}</p>
+              <p className="overview-meta">
+                {SITE.location}
+                {!isTodoValue(SITE.availability) ? ` · ${SITE.availability}` : ''}
+              </p>
+              <p className="overview-meta overview-meta--secondary">
+                GPA {educationEntry.gpa.toFixed(2)}/7.00
+                {awardsLine ? ` · ${awardsLine}` : ''}
+              </p>
+              <div className="overview-cta">
+                <a href={RESUME_HREF} className="overview-btn overview-btn--primary" download>
+                  [ Download resume ]
+                </a>
+                <a href={`mailto:${SITE.email}`} className="overview-btn">
+                  [ Email me ]
+                </a>
+                <a href={SITE.github} target="_blank" rel="noreferrer" className="overview-btn">
+                  [ GitHub ]
+                </a>
+                <a href={SITE.linkedin} target="_blank" rel="noreferrer" className="overview-btn">
+                  [ LinkedIn ]
+                </a>
+              </div>
+            </div>
+            <img
+              className="overview-hero-owl"
+              src="/hero-owl-480.webp"
+              srcSet="/hero-owl-240.webp 240w, /hero-owl-480.webp 480w"
+              sizes="(max-width: 899px) 96px, 260px"
+              width={460}
+              height={460}
+              decoding="async"
+              alt={OWL_ALT}
+            />
           </div>
         </div>
       </section>
@@ -150,7 +176,6 @@ export function RecruiterPanel({ onOpenTerminal }: Props) {
           </button>
         </p>
       ) : null}
-
     </main>
   )
 }

@@ -1,6 +1,7 @@
 import { useId, useState } from 'react'
-import resumePdf from '../../Shishir_Sankula_Resume.pdf'
 import { isTodoValue, SITE } from '../data/site'
+
+const RESUME_HREF = '/Shishir_Sankula_Resume.pdf'
 
 type FormStatus =
   | { type: 'idle' }
@@ -108,11 +109,11 @@ export function ContactPanel({ embedded = false }: Props) {
         <div className="contact-kv" role="listitem">
           <span className="contact-kv-key">resume</span>
           <div className="contact-kv-actions">
-            <a href={resumePdf} className="contact-panel-btn" download>
+            <a href={RESUME_HREF} className="contact-panel-btn" download>
               [ DOWNLOAD ]
             </a>
             <a
-              href={resumePdf}
+              href={RESUME_HREF}
               className="contact-panel-btn contact-panel-btn--secondary"
               target="_blank"
               rel="noreferrer"

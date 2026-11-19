@@ -10,9 +10,9 @@ import { SITE } from '../data/site'
 export function ResumeCrawlData() {
   return (
     <div className="sr-only" aria-label="Full resume and portfolio data">
-      <h1>
+      <h2>
         {SITE.name} — {SITE.title}
-      </h1>
+      </h2>
       <p>
         {SITE.pitch} Location: {SITE.location}. Status: {SITE.status}. GPA{' '}
         {educationEntry.gpa.toFixed(2)}/7.00.

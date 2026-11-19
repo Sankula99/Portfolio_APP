@@ -40,6 +40,7 @@ function ProjectCard({
   const visibleResults = project.result.filter((r) => !isTodoText(r))
   const keyResult = visibleResults[0] ?? ''
   const visibleLinks = project.links.filter((l) => !isTodoHref(l.href))
+  const statusLabel = project.status === 'in-progress' ? 'in-progress' : 'complete'
 
   return (
     <article className="project-card" id={`project-${project.slug}`}>
@@ -54,7 +55,7 @@ function ProjectCard({
           <div>
             <h3 className="project-card-name">{project.name}</h3>
             <p className="project-card-meta">
-              {project.role} · {project.period} · {project.status}
+              {project.role} · {project.period} · {statusLabel}
             </p>
           </div>
           <span className="project-card-chevron" aria-hidden="true">
@@ -71,6 +72,22 @@ function ProjectCard({
           ))}
         </div>
       </button>
+
+      {visibleLinks.length > 0 ? (
+        <div className="project-card-links project-card-links--collapsed">
+          {visibleLinks.map((link) => (
+            <a
+              key={link.label}
+              href={link.href}
+              target="_blank"
+              rel="noreferrer"
+              onClick={(e) => e.stopPropagation()}
+            >
+              [{link.label}]
+            </a>
+          ))}
+        </div>
+      ) : null}
 
       <div
         id={regionId}
@@ -98,6 +115,16 @@ function ProjectCard({
                 <li key={item} className="project-result-item">
                   {item}
                 </li>
+              ))}
+            </ul>
+          </section>
+        ) : null}
+        {project.limitations && project.limitations.length > 0 ? (
+          <section>
+            <h4>Limitation</h4>
+            <ul>
+              {project.limitations.map((item) => (
+                <li key={item}>{item}</li>
               ))}
             </ul>
           </section>

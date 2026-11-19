@@ -1,7 +1,6 @@
 import {
   useCallback,
   useEffect,
-  useId,
   useRef,
   useState,
   type KeyboardEvent,
@@ -21,6 +20,9 @@ import { ProjectsPanel } from '../panels/ProjectsPanel'
 type DesktopPage = 'recruiter' | 'terminal'
 
 const TERMINAL_TIP_KEY = 'terminalTipSeen'
+const OVERVIEW_TAB_ID = 'tab-overview'
+const TERMINAL_TAB_ID = 'tab-terminal'
+const VIEW_PANEL_ID = 'view-panel'
 
 function readTerminalTipSeen(): boolean {
   try {
@@ -43,6 +45,7 @@ export function DesktopScreen() {
   const [page, setPage] = useState<DesktopPage>('recruiter')
   const [showOverlay, setShowOverlay] = useState(false)
   const [expandProjectSlug, setExpandProjectSlug] = useState<string | null>(null)
+  const overviewTabRef = useRef<HTMLButtonElement>(null)
   const terminalTabRef = useRef<HTMLButtonElement>(null)
   const overlayTimerRef = useRef<number | null>(null)
   const projectsSectionRef = useRef<HTMLElement>(null)
@@ -75,6 +78,18 @@ export function DesktopScreen() {
     }
   }, [])
 
+  const selectPage = useCallback(
+    (next: DesktopPage, moveFocus: boolean) => {
+      changePage(next)
+      if (!moveFocus) return
+      window.requestAnimationFrame(() => {
+        const target = next === 'recruiter' ? overviewTabRef : terminalTabRef
+        target.current?.focus()
+      })
+    },
+    [changePage],
+  )
+
   const dismissOverlay = useCallback(() => {
     markTerminalTipSeen()
     setShowOverlay(false)
@@ -88,54 +103,59 @@ export function DesktopScreen() {
     })
   }, [])
 
+  const activeTabId = page === 'recruiter' ? OVERVIEW_TAB_ID : TERMINAL_TAB_ID
+
   return (
     <div className="desktop-root">
       <ResumeCrawlData />
       <DesktopTopBar
         clock={clock}
         page={page}
-        onChangePage={changePage}
+        onSelectPage={selectPage}
+        overviewTabRef={overviewTabRef}
         terminalTabRef={terminalTabRef}
       />
 
-      {page === 'recruiter' ? (
-        <RecruiterPanel onOpenTerminal={() => changePage('terminal')} />
-      ) : (
-        <>
-          <DesktopPathBar />
-          <div className="desktop-grid">
-            <div className="desktop-col-left desktop-col-left--fixed">
-              <RangerPanel onViewProjectDetails={viewProjectDetails} />
-            </div>
-            <div className="desktop-col-right">
-              <NvimPanel />
-              <div className="desktop-bottom-row">
-                <BtopPanel />
-                <ContactPanel />
+      <div role="tabpanel" id={VIEW_PANEL_ID} aria-labelledby={activeTabId}>
+        {page === 'recruiter' ? (
+          <RecruiterPanel onOpenTerminal={() => selectPage('terminal', false)} />
+        ) : (
+          <>
+            <DesktopPathBar />
+            <div className="desktop-grid">
+              <div className="desktop-col-left desktop-col-left--fixed">
+                <RangerPanel onViewProjectDetails={viewProjectDetails} />
+              </div>
+              <div className="desktop-col-right">
+                <NvimPanel />
+                <div className="desktop-bottom-row">
+                  <BtopPanel />
+                  <ContactPanel />
+                </div>
               </div>
             </div>
-          </div>
 
-          <section
-            className="panel terminal-projects"
-            id="terminal-projects"
-            ref={projectsSectionRef}
-            aria-label="Project case studies"
-          >
-            <header className="panel-titlebar">projects.md</header>
-            <div className="terminal-projects-body">
-              <ProjectsPanel projects={projectEntries} expandSlug={expandProjectSlug} />
-            </div>
-          </section>
+            <section
+              className="panel terminal-projects"
+              id="terminal-projects"
+              ref={projectsSectionRef}
+              aria-label="Project case studies"
+            >
+              <header className="panel-titlebar">projects.md</header>
+              <div className="terminal-projects-body">
+                <ProjectsPanel projects={projectEntries} expandSlug={expandProjectSlug} />
+              </div>
+            </section>
 
-          {showOverlay ? (
-            <WelcomeOverlay
-              onDismiss={dismissOverlay}
-              returnFocusRef={terminalTabRef}
-            />
-          ) : null}
-        </>
-      )}
+            {showOverlay ? (
+              <WelcomeOverlay
+                onDismiss={dismissOverlay}
+                returnFocusRef={terminalTabRef}
+              />
+            ) : null}
+          </>
+        )}
+      </div>
     </div>
   )
 }
@@ -143,75 +163,88 @@ export function DesktopScreen() {
 type TopBarProps = {
   clock: string
   page: DesktopPage
-  onChangePage: (page: DesktopPage) => void
+  onSelectPage: (page: DesktopPage, moveFocus: boolean) => void
+  overviewTabRef: RefObject<HTMLButtonElement | null>
   terminalTabRef: RefObject<HTMLButtonElement | null>
 }
 
-function DesktopTopBar({ clock, page, onChangePage, terminalTabRef }: TopBarProps) {
-  const overviewId = useId()
-  const terminalId = useId()
-  const tablistRef = useRef<HTMLDivElement>(null)
-
+function DesktopTopBar({
+  clock,
+  page,
+  onSelectPage,
+  overviewTabRef,
+  terminalTabRef,
+}: TopBarProps) {
   const onKeyDown = (e: KeyboardEvent) => {
-    if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return
-    e.preventDefault()
-    onChangePage(page === 'recruiter' ? 'terminal' : 'recruiter')
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+      e.preventDefault()
+      onSelectPage(page === 'recruiter' ? 'terminal' : 'recruiter', true)
+      return
+    }
+    if (e.key === 'Home') {
+      e.preventDefault()
+      onSelectPage('recruiter', true)
+      return
+    }
+    if (e.key === 'End') {
+      e.preventDefault()
+      onSelectPage('terminal', true)
+    }
   }
 
   return (
     <header className="desktop-topbar">
-      <nav
+      <div
         className="desktop-workspaces"
         role="tablist"
         aria-label="Portfolio views"
-        ref={tablistRef}
         onKeyDown={onKeyDown}
       >
         <button
           type="button"
-          id={overviewId}
+          id={OVERVIEW_TAB_ID}
           role="tab"
           aria-selected={page === 'recruiter'}
-          aria-controls="overview-panel"
+          aria-controls={VIEW_PANEL_ID}
           className={`workspace-pill workspace-pill--label ${
             page === 'recruiter' ? 'workspace-pill--active' : ''
           }`}
-          onClick={() => onChangePage('recruiter')}
+          onClick={() => onSelectPage('recruiter', false)}
           tabIndex={page === 'recruiter' ? 0 : -1}
+          ref={overviewTabRef}
         >
           Overview
         </button>
         <button
           type="button"
-          id={terminalId}
+          id={TERMINAL_TAB_ID}
           role="tab"
           aria-selected={page === 'terminal'}
-          aria-controls="terminal-panel"
+          aria-controls={VIEW_PANEL_ID}
           className={`workspace-pill workspace-pill--label ${
             page === 'terminal' ? 'workspace-pill--active' : ''
           }`}
-          onClick={() => onChangePage('terminal')}
+          onClick={() => onSelectPage('terminal', false)}
           tabIndex={page === 'terminal' ? 0 : -1}
           ref={terminalTabRef}
         >
           Terminal
         </button>
-      </nav>
+      </div>
       <div className="desktop-title">▸ PORTFOLIO</div>
       <div className="desktop-path">shishir@arch:~/portfolio</div>
       <div className="desktop-status">
-        <span className="status-dot" aria-hidden="true" /> {SITE.status} · {clock}
+        <span className="status-dot" aria-hidden="true" />
+        <span>
+          {SITE.status} · {clock}
+        </span>
       </div>
     </header>
   )
 }
 
 function DesktopPathBar() {
-  return (
-    <div className="desktop-pathbar" id="terminal-panel" role="tabpanel">
-      ~/experience · ~/education · ~/projects · ~/skills
-    </div>
-  )
+  return <div className="desktop-pathbar">~/experience · ~/education · ~/projects · ~/skills</div>
 }
 
 function formatDesktopClock(date: Date) {

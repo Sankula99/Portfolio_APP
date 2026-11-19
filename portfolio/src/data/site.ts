@@ -6,7 +6,7 @@ export const SITE = {
   github: 'https://github.com/Sankula99',
   linkedin: 'https://www.linkedin.com/in/shishirsankula',
   resumeFile: 'Shishir_Sankula_Resume.pdf',
-  availability: 'Available',
+  availability: 'Available now',
   status: 'Seeking internship and graduate roles',
   pitch:
     'Final-year Software Engineering student at UTS building ML, data and secure full-stack products. Co-led two startup MVP teams. Seeking internship and graduate roles.',

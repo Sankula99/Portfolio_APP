@@ -34,7 +34,7 @@ If the env var is missing, the form is hidden and only the mailto / resume links
 
 - Site constants: `src/data/site.ts`
 - Portfolio data: `src/data/portfolio.ts`
-- Resume PDF: `Shishir_Sankula_Resume.pdf` (also in `public/`)
+- Resume PDF: `public/Shishir_Sankula_Resume.pdf`
 
 ## Deploy (Vercel)
 
@@ -42,3 +42,14 @@ If the env var is missing, the form is hidden and only the mailto / resume links
 - Build: `npm run build`
 - Output: `dist`
 - Add `VITE_FORMSPREE_ID` in project env vars
+
+## After deploying
+
+Once you have a live URL, add these back:
+
+1. `<link rel="canonical">` in `index.html`
+2. `og:url` meta tag
+3. Absolute `og:image` and `twitter:image` URLs
+4. `"url"` field in the JSON-LD Person block
+5. `public/sitemap.xml` with your domain
+6. `Sitemap:` line in `public/robots.txt`

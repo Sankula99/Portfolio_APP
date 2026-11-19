@@ -21,11 +21,12 @@ export type ProjectEntry = {
   name: string
   role: string
   period: string
-  status: 'shipped' | 'in-progress'
+  status: 'complete' | 'in-progress'
   summary: string
   problem: string
   approach: string[]
   result: string[]
+  limitations?: string[]
   stack: string[]
   links: { label: string; href: string }[]
   featured: boolean
@@ -54,11 +55,10 @@ export const experienceEntries: ExperienceEntry[] = [
     company: 'OPTIK Consultancy (Internship)',
     period: 'Nov 2025 – Feb 2026',
     bullets: [
-      'Built a startup client’s MVP web app with React, TypeScript, Supabase and Clerk; designed the PostgreSQL schema and frontend components.',
-      'Implemented authentication and session management with Clerk to control access to user data.',
-      'Gathered requirements directly with the client, demoed each sprint, delivered the MVP on schedule.',
-      'Developed a Python BERT NLP model to classify recorded meetings, achieving 0.98 recall.',
-      'Co-led a team of 5 developers (stand-ups, sprint planning, prioritisation); introduced code review, version control and documentation standards, and ran 1-on-1s.',
+      'Delivered a startup client’s MVP web app on schedule with React, TypeScript, Supabase and Clerk, designing the PostgreSQL schema and frontend components and gathering requirements directly with the client.',
+      'Secured access to user data with Clerk authentication and session management integrated across the React frontend and Supabase backend.',
+      'Built a Python BERT NLP classifier for recorded meetings that reached 0.98 recall.',
+      'Co-led 5 developers through agile sprints (stand-ups, sprint planning, per-sprint client demos); introduced code review, version control and documentation standards and ran 1-on-1s to unblock teammates.',
     ],
   },
   {
@@ -67,9 +67,9 @@ export const experienceEntries: ExperienceEntry[] = [
     company: 'InviteApp Startup (Client Project)',
     period: 'Mar 2025 – Jul 2025',
     bullets: [
-      'Built a React Native, TypeScript, Prisma mobile MVP, delivered a working prototype ahead of the client’s funding round.',
-      'Led frontend architecture and component design for a 6-person team (iOS and Android).',
-      'Integrated REST APIs to sync the dashboard with the centralised backend.',
+      'Delivered a working React Native, TypeScript and Prisma mobile prototype for iOS and Android ahead of the client’s funding round.',
+      'Led frontend architecture and component design for a 6-person team, building a responsive UI.',
+      'Integrated REST APIs to sync the React Native dashboard with the centralised backend.',
     ],
   },
 ]
@@ -111,8 +111,7 @@ export const projectEntries: ProjectEntry[] = [
     ],
     stack: ['React', 'FastAPI', 'Weaviate', 'Ollama', 'Python'],
     links: [
-      { label: 'Repo', href: 'TODO: RAG Document Assistant repo URL' },
-      { label: 'Demo', href: 'TODO: RAG Document Assistant demo URL' },
+      { label: 'Repo', href: 'https://github.com/Sankula99/RAG_Document_Assistant' },
     ],
     featured: true,
     skillGroups: ['Languages', 'AI & Data', 'Web & Cloud'],
@@ -121,8 +120,8 @@ export const projectEntries: ProjectEntry[] = [
     slug: 'physiological-stress-detection',
     name: 'Hybrid Deep Learning Fusion for Physiological Stress Detection',
     role: 'ML Engineer',
-    period: 'May 2026 – Present',
-    status: 'shipped',
+    period: 'May 2026 – Nov 2026',
+    status: 'complete',
     summary:
       'Cross-dataset LODO evaluation of dual-stream CNN–recurrent fusion on BVP and EDA, with pruned INT8 deployment on a Raspberry Pi Zero 2W.',
     problem:
@@ -136,6 +135,9 @@ export const projectEntries: ProjectEntry[] = [
       'CNN+LSTM+GRU highest mean macro F1 (0.69); WESAD holdout 0.890 ± 0.009 at 60 s.',
       'Held-out dataset dominated performance: mean macro F1 0.66 / 0.47 / 0.77 (UBFC-Phys / Wearable / WESAD).',
       'On-device: 6.80 ms mean latency; macro F1 0.787 after prune+INT8 (from 0.890); stress-class F1 0.836.',
+    ],
+    limitations: [
+      'RQ2 target not met: pruning and INT8 quantisation reduced on-device macro F1 from 0.890 to 0.787 (about an 11.6% drop, outside the 5% tolerance), although 6.80 ms mean latency was far below the 500 ms budget.',
     ],
     stack: ['Python', 'TensorFlow', 'TensorFlow Lite', 'NumPy', 'pandas', 'Raspberry Pi'],
     links: [
@@ -154,7 +156,7 @@ export const projectEntries: ProjectEntry[] = [
     name: 'Network Attack and Defence Labs',
     role: 'Network Security Analyst',
     period: 'Sep – Oct 2026',
-    status: 'shipped',
+    status: 'complete',
     summary:
       'Attack–defence lab covering SYN flood, ARP poisoning, session hijacking and DNS poisoning with matched mitigations.',
     problem: 'Need hands-on mapping of common network attacks to concrete defensive controls.',
@@ -179,7 +181,7 @@ export const projectEntries: ProjectEntry[] = [
     name: 'Heart Disease Detection',
     role: 'Data Scientist',
     period: 'Aug – Nov 2025',
-    status: 'shipped',
+    status: 'complete',
     summary: 'XGBoost classifier on the UCI clinical heart disease dataset with a full preprocessing pipeline.',
     problem: 'Need an accurate clinical risk classifier with transparent precision/recall trade-offs.',
     approach: [
@@ -190,8 +192,7 @@ export const projectEntries: ProjectEntry[] = [
     result: ['Achieved 0.88 F1 on the held-out evaluation set.'],
     stack: ['Python', 'XGBoost', 'pandas', 'NumPy', 'Scikit-Learn'],
     links: [
-      { label: 'Repo', href: 'TODO: Heart Disease Detection repo URL' },
-      { label: 'Demo', href: 'TODO: Heart Disease Detection demo URL' },
+      { label: 'Repo', href: 'https://github.com/Sankula99/Heart-Disease-Detection' },
     ],
     featured: true,
     skillGroups: ['Languages', 'AI & Data'],
@@ -201,7 +202,7 @@ export const projectEntries: ProjectEntry[] = [
     name: 'Scalable AWS LAMP Web Application',
     role: 'System Programmer',
     period: 'Sep – Nov 2024',
-    status: 'shipped',
+    status: 'complete',
     summary:
       'Highly available LAMP stack on AWS with multi-AZ networking, autoscaling and Multi-AZ RDS.',
     problem: 'Need a production-style web architecture with HA/DR across availability zones.',
@@ -224,7 +225,7 @@ export const projectEntries: ProjectEntry[] = [
     name: 'Video Game Sales and Consumer Insights System',
     role: 'Data Analyst',
     period: 'Apr – May 2025',
-    status: 'shipped',
+    status: 'complete',
     summary:
       'Power BI dashboards over a star-schema Azure SQL database with DirectQuery for sales insights.',
     problem: 'Stakeholders needed live sales and consumer insights without brittle extracts.',
@@ -247,7 +248,7 @@ export const projectEntries: ProjectEntry[] = [
     name: 'CPU Scheduler & Page Replacement Simulator',
     role: 'System Programmer',
     period: 'Apr – Jun 2026',
-    status: 'shipped',
+    status: 'complete',
     summary:
       'Round Robin scheduler and FIFO page-replacement simulator with IPC via named pipes and semaphores.',
     problem: 'Need a controllable simulator to measure scheduling and paging behaviour.',
@@ -272,7 +273,7 @@ export const projectEntries: ProjectEntry[] = [
     name: 'This portfolio site',
     role: 'Full-Stack Engineer',
     period: '2025 – Present',
-    status: 'in-progress',
+    status: 'complete',
     summary:
       'Terminal-themed React 19 + TypeScript + Vite portfolio with a recruiter Overview and Terminal view.',
     problem: 'Need a distinctive portfolio that still converts for recruiters who want a quick skim.',
@@ -280,10 +281,11 @@ export const projectEntries: ProjectEntry[] = [
       'React 19, TypeScript, Vite SPA with Overview as the default view.',
       'Terminal/Linux visual identity with accessible recruiter content and case-study projects.',
     ],
-    // TODO: replace with a measured metric (e.g. Lighthouse score) once available
     result: [
-      'TODO: measurable result (e.g. Lighthouse performance score once measured)',
-      'Overview-first React 19 portfolio with skippable intro under 3s on first visit.',
+      'Production JS bundle 72.99 KB gzipped (Vite build).',
+      'Minimum text-token contrast 4.68:1 (grey-3 on panel), meeting WCAG AA 4.5:1.',
+      'No horizontal overflow from 320px to 1440px in the Overview.',
+      'Full keyboard navigation with visible focus styles.',
     ],
     stack: ['React 19', 'TypeScript', 'Vite'],
     links: [

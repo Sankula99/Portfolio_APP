@@ -18,7 +18,7 @@ export function LoginScreen() {
           </div>
         </div>
 
-        <h1 className="login-name">{SITE.name}</h1>
+        <p className="login-name">{SITE.name}</p>
 
         <div className="login-username-pill">shishir@portfolio</div>
 

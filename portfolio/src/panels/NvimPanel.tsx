@@ -1,49 +1,29 @@
-import { useEffect, useState } from 'react'
 import { educationEntry } from '../data/portfolio'
 import { SITE, wrapPitchLines } from '../data/site'
 
-const HEADSHOT = '/headshot.jpg'
+const OWL_ALT =
+  'Illustration of a steampunk owl in a top hat holding a laptop, the portfolio mascot'
 const pitchLines = wrapPitchLines(SITE.pitch, 66)
 
 export function NvimPanel() {
-  const [hasHeadshot, setHasHeadshot] = useState(false)
-
-  useEffect(() => {
-    let cancelled = false
-    const img = new Image()
-    img.onload = () => {
-      if (!cancelled) setHasHeadshot(true)
-    }
-    img.onerror = () => {
-      if (!cancelled) setHasHeadshot(false)
-    }
-    img.src = HEADSHOT
-    return () => {
-      cancelled = true
-    }
-  }, [])
-
   return (
     <section className="panel panel-nvim">
       <header className="panel-titlebar">nvim</header>
       <div className="nvim-body">
         <aside className="nvim-profile">
           <div className="nvim-avatar">
-            {hasHeadshot ? (
-              <img
-                src={HEADSHOT}
-                alt={`${SITE.name} headshot`}
-                className="nvim-avatar-img"
-                width={92}
-                height={92}
-              />
-            ) : (
-              <div className="nvim-avatar-inner" aria-hidden="true">
-                SS
-              </div>
-            )}
+            <img
+              src="/hero-owl-240.webp"
+              srcSet="/hero-owl-240.webp 240w, /hero-owl-480.webp 480w"
+              sizes="120px"
+              alt={OWL_ALT}
+              className="nvim-avatar-img"
+              width={120}
+              height={120}
+              decoding="async"
+            />
           </div>
-          <div className="nvim-name">{SITE.name}</div>
+          <h1 className="nvim-name">{SITE.name}</h1>
           <div className="nvim-role">SE Student · UTS &apos;26</div>
           <div className="nvim-status-badge">
             <span className="status-dot" aria-hidden="true" /> {SITE.status}
