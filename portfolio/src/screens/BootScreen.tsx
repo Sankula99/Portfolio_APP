@@ -73,7 +73,7 @@ export function BootScreen({ onComplete }: Props) {
         ))}
       </div>
 
-      <p className="boot-skip-hint">press any key to skip</p>
+      <p className="boot-skip-hint">Press any key or tap to skip</p>
     </div>
   )
 }

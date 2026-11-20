@@ -1,14 +1,28 @@
-import { useId, useState } from 'react'
+import { lazy, Suspense, useId, useState } from 'react'
 import { isTodoHref, isTodoText, type ProjectEntry } from '../data/portfolio'
+
+const StressF1Chart = lazy(() =>
+  import('../ui/ProjectVisuals').then((m) => ({ default: m.StressF1Chart })),
+)
+const AwsLampArch = lazy(() =>
+  import('../ui/ProjectVisuals').then((m) => ({ default: m.AwsLampArch })),
+)
 
 type Props = {
   projects: ProjectEntry[]
   title?: string
   compact?: boolean
   expandSlug?: string | null
+  onExpandChange?: (slug: string | null) => void
 }
 
-export function ProjectsPanel({ projects, title, compact = false, expandSlug = null }: Props) {
+export function ProjectsPanel({
+  projects,
+  title,
+  compact = false,
+  expandSlug = null,
+  onExpandChange,
+}: Props) {
   return (
     <div className={`projects-panel ${compact ? 'projects-panel--compact' : ''}`}>
       {title ? <h2 className="projects-panel-title">{title}</h2> : null}
@@ -17,9 +31,11 @@ export function ProjectsPanel({ projects, title, compact = false, expandSlug = n
           const shouldExpand = expandSlug === project.slug
           return (
             <ProjectCard
-              key={`${project.slug}-${shouldExpand ? 'open' : 'idle'}`}
+              key={project.slug}
               project={project}
               initiallyOpen={shouldExpand}
+              forceOpen={shouldExpand}
+              onExpandChange={onExpandChange}
             />
           )
         })}
@@ -28,19 +44,48 @@ export function ProjectsPanel({ projects, title, compact = false, expandSlug = n
   )
 }
 
-function ProjectCard({
+export function ProjectCard({
   project,
   initiallyOpen = false,
+  forceOpen = false,
+  onExpandChange,
 }: {
   project: ProjectEntry
   initiallyOpen?: boolean
+  forceOpen?: boolean
+  onExpandChange?: (slug: string | null) => void
 }) {
-  const [open, setOpen] = useState(initiallyOpen)
+  const [userOpen, setUserOpen] = useState(initiallyOpen)
+  const open = forceOpen || userOpen
   const regionId = useId()
+
   const visibleResults = project.result.filter((r) => !isTodoText(r))
-  const keyResult = visibleResults[0] ?? ''
   const visibleLinks = project.links.filter((l) => !isTodoHref(l.href))
-  const statusLabel = project.status === 'in-progress' ? 'in-progress' : 'complete'
+  const headline =
+    project.headline && !isTodoText(project.headline) ? project.headline : ''
+  const showOutcome = Boolean(headline)
+  const baseline =
+    project.baselineNote && !isTodoText(project.baselineNote)
+      ? project.baselineNote
+      : null
+  const statusNote =
+    project.statusNote && !isTodoText(project.statusNote) ? project.statusNote : null
+  const imageSrc =
+    project.visualSrc && !isTodoHref(project.visualSrc) ? project.visualSrc : null
+  const metaParts = [
+    !isTodoText(project.role) ? project.role : null,
+    !isTodoText(project.period) ? project.period : null,
+  ].filter(Boolean)
+
+  const toggle = () => {
+    if (open) {
+      setUserOpen(false)
+      onExpandChange?.(null)
+    } else {
+      setUserOpen(true)
+      onExpandChange?.(project.slug)
+    }
+  }
 
   return (
     <article className="project-card" id={`project-${project.slug}`}>
@@ -49,21 +94,30 @@ function ProjectCard({
         className="project-card-toggle"
         aria-expanded={open}
         aria-controls={regionId}
-        onClick={() => setOpen((v) => !v)}
+        onClick={toggle}
       >
         <div className="project-card-header">
           <div>
             <h3 className="project-card-name">{project.name}</h3>
-            <p className="project-card-meta">
-              {project.role} · {project.period} · {statusLabel}
-            </p>
+            {metaParts.length > 0 || project.status === 'in-progress' ? (
+              <p className="project-card-meta">
+                {metaParts.join(' · ')}
+                {project.status === 'in-progress' ? (
+                  <>
+                    {metaParts.length > 0 ? ' · ' : null}
+                    <span className="project-chip project-chip--status">in progress</span>
+                  </>
+                ) : null}
+              </p>
+            ) : null}
           </div>
           <span className="project-card-chevron" aria-hidden="true">
             {open ? '▾' : '▸'}
           </span>
         </div>
         <p className="project-card-summary">{project.summary}</p>
-        {keyResult ? <p className="project-card-result">{keyResult}</p> : null}
+        {statusNote ? <p className="project-card-status-note">{statusNote}</p> : null}
+        {showOutcome ? <p className="project-card-result">{headline}</p> : null}
         <div className="project-card-stack">
           {project.stack.map((tag) => (
             <span key={tag} className="project-chip">
@@ -89,12 +143,7 @@ function ProjectCard({
         </div>
       ) : null}
 
-      <div
-        id={regionId}
-        role="region"
-        hidden={!open}
-        className="project-card-body"
-      >
+      <div id={regionId} role="region" hidden={!open} className="project-card-body">
         <section>
           <h4>Problem</h4>
           <p>{project.problem}</p>
@@ -117,6 +166,7 @@ function ProjectCard({
                 </li>
               ))}
             </ul>
+            {baseline ? <p className="project-baseline">{baseline}</p> : null}
           </section>
         ) : null}
         {project.limitations && project.limitations.length > 0 ? (
@@ -127,6 +177,35 @@ function ProjectCard({
                 <li key={item}>{item}</li>
               ))}
             </ul>
+          </section>
+        ) : null}
+        {project.visual === 'stress-f1-chart' ? (
+          <section>
+            <h4>Visual</h4>
+            <Suspense fallback={null}>
+              <StressF1Chart />
+            </Suspense>
+          </section>
+        ) : null}
+        {project.visual === 'aws-lamp-arch' ? (
+          <section>
+            <h4>Visual</h4>
+            <Suspense fallback={null}>
+              <AwsLampArch />
+            </Suspense>
+          </section>
+        ) : null}
+        {imageSrc ? (
+          <section>
+            <h4>Visual</h4>
+            <img
+              className="project-visual-img"
+              src={imageSrc}
+              alt={project.visualAlt ?? project.name}
+              width={project.visualWidth ?? 800}
+              height={project.visualHeight ?? 450}
+              loading="lazy"
+            />
           </section>
         ) : null}
         <section>

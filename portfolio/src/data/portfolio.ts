@@ -16,6 +16,8 @@ export type EducationEntry = {
   highlights: string[]
 }
 
+export type ProjectVisual = 'stress-f1-chart' | 'aws-lamp-arch'
+
 export type ProjectEntry = {
   slug: string
   name: string
@@ -27,6 +29,15 @@ export type ProjectEntry = {
   approach: string[]
   result: string[]
   limitations?: string[]
+  /** Plain-English outcome shown on the collapsed card instead of result[0]. */
+  headline?: string
+  baselineNote?: string
+  statusNote?: string
+  visual?: ProjectVisual
+  visualSrc?: string
+  visualAlt?: string
+  visualWidth?: number
+  visualHeight?: number
   stack: string[]
   links: { label: string; href: string }[]
   featured: boolean
@@ -106,15 +117,61 @@ export const projectEntries: ProjectEntry[] = [
       'Ingestion pipeline with semantic chunking, embeddings and vector search.',
       'LLM response generation grounded in retrieved context.',
     ],
-    result: [
+    result: [],
+    statusNote:
       'Currently exploring prompt engineering, retrieval optimisation and citation quality.',
-    ],
+    visualSrc: 'TODO: screenshot',
+    visualAlt: 'TODO: screenshot of the RAG UI with a cited answer',
     stack: ['React', 'FastAPI', 'Weaviate', 'Ollama', 'Python'],
     links: [
-      { label: 'Repo', href: 'https://github.com/Sankula99/RAG_Document_Assistant' },
+      { label: 'GitHub repository', href: 'https://github.com/Sankula99/RAG_Document_Assistant' },
     ],
     featured: true,
     skillGroups: ['Languages', 'AI & Data', 'Web & Cloud'],
+  },
+  {
+    slug: 'fomo-timetable-extension',
+    name: 'FOMO: Timetable Friend Matcher',
+    role: 'TODO: confirm role',
+    period: 'TODO: confirm period',
+    status: 'complete',
+    summary:
+      'Chromium extension that shows UTS students which friends share their classes and when the group is free, built from the Allocate+ calendar feed. Working prototype.',
+    problem:
+      'Finding which friends share your lectures, tutorials and studios, and when the group is free, means comparing timetables by hand.',
+    approach: [
+      "Imports the student's UTS Allocate+ calendar feed (ICS), parses the scheduled classes and upserts them into Supabase Postgres, keyed on user, subject, offering, activity type, activity number and start time.",
+      'Matches timetables on subject number, offering code, activity type and activity number to highlight shared lectures, tutorials and studios; a content script injects friend indicators into the MyTimetableCloud timetable view.',
+      "Free-time engine merges each person's busy intervals with timezone and daylight-saving handling (Australia/Sydney) and ranks slots by how many people are free.",
+      'Email one-time-password sign-in through Clerk, shared across the popup, the dashboard and a Manifest V3 background service worker; Supabase row-level security and column grants control who can read what.',
+      'Plain JavaScript with no framework, bundled with esbuild.',
+    ],
+    result: [
+      'Working prototype loaded as an unpacked Chromium extension: a popup for sign-in, profile, friends and notifications, and a dashboard for common classes and free time.',
+      'Friendships are stored as reciprocal rows with owner-only access policies, so marking a friend as close does not disclose that choice to them.',
+      'Regression tests run with the Node test runner and cover the free-time engine, dashboard data, shared authentication, avatars, people refresh and friendships; the friendship tests run the real migration SQL against PGlite fixtures, including row-level-security restrictions.',
+    ],
+    limitations: [
+      'Sharing and notification switches are local preferences, not server-enforced privacy controls.',
+      'Timetable imports upsert but do not remove classes that later disappear from the calendar.',
+      'Multi-account verification against the live Supabase policies and Clerk was still required before merging.',
+    ],
+    stack: [
+      'JavaScript',
+      'Chrome Extension (Manifest V3)',
+      'Supabase (Postgres)',
+      'Clerk',
+      'esbuild',
+      'Node test runner',
+    ],
+    links: [
+      {
+        label: 'GitHub repository',
+        href: 'https://github.com/Sankula99/2026SIS_Group26',
+      },
+    ],
+    featured: true,
+    skillGroups: ['Languages', 'Web & Cloud', 'Security & Networking'],
   },
   {
     slug: 'physiological-stress-detection',
@@ -123,7 +180,7 @@ export const projectEntries: ProjectEntry[] = [
     period: 'May 2026 – Nov 2026',
     status: 'complete',
     summary:
-      'Cross-dataset LODO evaluation of dual-stream CNN–recurrent fusion on BVP and EDA, with pruned INT8 deployment on a Raspberry Pi Zero 2W.',
+      'Cross-dataset leave-one-dataset-out evaluation of dual-stream CNN–recurrent fusion on blood-volume pulse and electrodermal activity, with pruned INT8 deployment on a Raspberry Pi Zero 2W.',
     problem:
       'Wearable stress models overfit the dataset they were trained on and degrade under cross-dataset transfer, while edge devices need compressed models that stay accurate and fast.',
     approach: [
@@ -132,16 +189,19 @@ export const projectEntries: ProjectEntry[] = [
       'Pruned (50% sparsity) and INT8-quantised the best model and deployed TensorFlow Lite on a Raspberry Pi Zero 2W.',
     ],
     result: [
-      'CNN+LSTM+GRU highest mean macro F1 (0.69); WESAD holdout 0.890 ± 0.009 at 60 s.',
+      'CNN+LSTM+GRU highest mean macro F1 (F1 averaged across classes) (0.69); WESAD holdout 0.890 ± 0.009 at 60 s.',
       'Held-out dataset dominated performance: mean macro F1 0.66 / 0.47 / 0.77 (UBFC-Phys / Wearable / WESAD).',
       'On-device: 6.80 ms mean latency; macro F1 0.787 after prune+INT8 (from 0.890); stress-class F1 0.836.',
     ],
+    headline:
+      'Pruned and INT8-quantised model runs in 6.80 ms on a Raspberry Pi Zero 2W; macro F1 (F1 averaged across classes) fell from 0.890 to 0.787, outside my 5% target.',
     limitations: [
-      'RQ2 target not met: pruning and INT8 quantisation reduced on-device macro F1 from 0.890 to 0.787 (about an 11.6% drop, outside the 5% tolerance), although 6.80 ms mean latency was far below the 500 ms budget.',
+      'On-device accuracy target not met: pruning and INT8 quantisation cut macro F1 from 0.890 to 0.787, about an 11.6% drop against a 5% tolerance. Latency was 6.80 ms against a 500 ms budget.',
     ],
+    visual: 'stress-f1-chart',
     stack: ['Python', 'TensorFlow', 'TensorFlow Lite', 'NumPy', 'pandas', 'Raspberry Pi'],
     links: [
-      { label: 'Repo', href: 'TODO: Stress Detection repo URL' },
+      { label: 'GitHub repository', href: 'TODO: Stress Detection repo URL' },
       { label: 'Demo', href: 'TODO: Stress Detection demo URL' },
       {
         label: 'Write-up',
@@ -168,9 +228,11 @@ export const projectEntries: ProjectEntry[] = [
     result: [
       'Mapped each attack to a mitigating control and verified defence effectiveness against live traffic.',
     ],
+    visualSrc: 'TODO: screenshot',
+    visualAlt: 'TODO: screenshot of a Snort alert or lab diagram',
     stack: ['Snort', 'iptables', 'Juniper SRX', 'OpenSSL', 'Wireshark'],
     links: [
-      { label: 'Repo', href: 'TODO: Network Labs repo URL' },
+      { label: 'GitHub repository', href: 'TODO: Network Labs repo URL' },
       { label: 'Write-up', href: 'TODO: Network Labs write-up URL' },
     ],
     featured: true,
@@ -190,9 +252,11 @@ export const projectEntries: ProjectEntry[] = [
       'Benchmarked configurations on precision/recall trade-offs.',
     ],
     result: ['Achieved 0.88 F1 on the held-out evaluation set.'],
+    headline: 'Achieved 0.88 F1 on the held-out evaluation set.',
+    baselineNote: 'TODO: baseline to compare against',
     stack: ['Python', 'XGBoost', 'pandas', 'NumPy', 'Scikit-Learn'],
     links: [
-      { label: 'Repo', href: 'https://github.com/Sankula99/Heart-Disease-Detection' },
+      { label: 'GitHub repository', href: 'https://github.com/Sankula99/Heart-Disease-Detection' },
     ],
     featured: true,
     skillGroups: ['Languages', 'AI & Data'],
@@ -212,9 +276,10 @@ export const projectEntries: ProjectEntry[] = [
       'Architecture write-up justifying each service for HA/DR.',
     ],
     result: ['Multi-AZ deployment with autoscaling capacity from 2 to 8 EC2 instances.'],
+    visual: 'aws-lamp-arch',
     stack: ['AWS', 'EC2', 'RDS', 'VPC', 'Linux'],
     links: [
-      { label: 'Repo', href: 'TODO: AWS LAMP repo URL' },
+      { label: 'GitHub repository', href: 'TODO: AWS LAMP repo URL' },
       { label: 'Write-up', href: 'TODO: AWS LAMP write-up URL' },
     ],
     featured: false,
@@ -235,9 +300,11 @@ export const projectEntries: ProjectEntry[] = [
       'Wrote architecture, task-flow diagrams and requirements for a 4-person team.',
     ],
     result: ['Live DirectQuery dashboards with resolved Azure SQL connectivity for the team.'],
+    visualSrc: 'TODO: screenshot',
+    visualAlt: 'TODO: screenshot of the Power BI dashboard',
     stack: ['Power BI', 'Azure SQL', 'DirectQuery'],
     links: [
-      { label: 'Repo', href: 'TODO: Video Game Sales repo URL' },
+      { label: 'GitHub repository', href: 'TODO: Video Game Sales repo URL' },
       { label: 'Dashboard', href: 'TODO: Video Game Sales dashboard URL' },
     ],
     featured: false,
@@ -262,7 +329,7 @@ export const projectEntries: ProjectEntry[] = [
     ],
     stack: ['C/C++', 'IPC', 'Semaphores'],
     links: [
-      { label: 'Repo', href: 'TODO: CPU Scheduler repo URL' },
+      { label: 'GitHub repository', href: 'TODO: CPU Scheduler repo URL' },
       { label: 'Write-up', href: 'TODO: CPU Scheduler write-up URL' },
     ],
     featured: false,
@@ -282,14 +349,14 @@ export const projectEntries: ProjectEntry[] = [
       'Terminal/Linux visual identity with accessible recruiter content and case-study projects.',
     ],
     result: [
-      'Production JS bundle 72.99 KB gzipped (Vite build).',
+      'Production JS bundle about 73 KB gzipped (Vite build).',
       'Minimum text-token contrast 4.68:1 (grey-3 on panel), meeting WCAG AA 4.5:1.',
       'No horizontal overflow from 320px to 1440px in the Overview.',
       'Full keyboard navigation with visible focus styles.',
     ],
     stack: ['React 19', 'TypeScript', 'Vite'],
     links: [
-      { label: 'Repo', href: 'TODO: Portfolio site repo URL' },
+      { label: 'GitHub repository', href: 'TODO: Portfolio site repo URL' },
       { label: 'Live', href: 'TODO: Portfolio site live URL' },
     ],
     featured: false,
@@ -301,7 +368,8 @@ export const skillGroups: SkillGroup[] = [
   {
     label: 'Languages',
     tags: ['Python', 'TypeScript', 'Java', 'C/C++', 'SQL', 'HTML/CSS'],
-    usedIn: 'OPTIK BERT classifier, Stress Detection, Heart Disease, CPU Simulator',
+    usedIn:
+      'OPTIK BERT classifier, Stress Detection, Heart Disease, CPU Simulator, FOMO',
     variant: 'green',
   },
   {
@@ -329,7 +397,7 @@ export const skillGroups: SkillGroup[] = [
       'OpenSSL/PKI',
       'John the Ripper',
     ],
-    usedIn: 'Network Attack and Defence Labs',
+    usedIn: 'Network Attack and Defence Labs, FOMO',
     variant: 'slate',
   },
   {
@@ -345,7 +413,7 @@ export const skillGroups: SkillGroup[] = [
       'Docker',
       'Git/GitHub',
     ],
-    usedIn: 'OPTIK MVP, InviteApp, AWS LAMP, this portfolio',
+    usedIn: 'OPTIK MVP, InviteApp, AWS LAMP, this portfolio, FOMO',
     variant: 'amber',
   },
 ]

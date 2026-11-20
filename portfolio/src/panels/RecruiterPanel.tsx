@@ -3,13 +3,12 @@ import {
   educationEntry,
   experienceEntries,
   featuredProjects,
-  inProgressProjects,
   projectEntries,
   skillGroups,
 } from '../data/portfolio'
 import { isTodoValue, SITE } from '../data/site'
 import { ContactPanel } from './ContactPanel'
-import { NowBuildingStrip, ProjectsPanel } from './ProjectsPanel'
+import { ProjectsPanel } from './ProjectsPanel'
 
 const RESUME_HREF = '/Shishir_Sankula_Resume.pdf'
 const OWL_ALT =
@@ -17,22 +16,45 @@ const OWL_ALT =
 
 type Props = {
   onOpenTerminal?: () => void
+  expandProjectSlug?: string | null
+  onExpandChange?: (slug: string | null) => void
 }
 
 function formatAwards(awards: string[]): string {
   return awards.map((a) => a.replace(/\((\d+)\)/, '$1')).join(' · ')
 }
 
-export function RecruiterPanel({ onOpenTerminal }: Props) {
+export function RecruiterPanel({
+  onOpenTerminal,
+  expandProjectSlug = null,
+  onExpandChange,
+}: Props) {
   const [showAllProjects, setShowAllProjects] = useState(false)
   const featured = featuredProjects()
-  const building = inProgressProjects().filter((p) => p.slug !== 'portfolio-site')
-  const projectsToShow = showAllProjects ? projectEntries : featured
+  const projectsToShow =
+    showAllProjects || expandProjectSlug
+      ? projectEntries
+      : featured
   const awardsLine = formatAwards(educationEntry.awards)
+  const metaParts = [
+    SITE.location,
+    !isTodoValue(SITE.availability) ? SITE.availability : null,
+    !isTodoValue(SITE.workRights) ? SITE.workRights : null,
+  ].filter(Boolean)
+
+  const consented = SITE.endorsements.filter((e) => e.consent)
 
   return (
     <main className="overview-root" id="overview-panel">
-      <section className="overview-hero panel">
+      <nav className="overview-jump" aria-label="On this page">
+        <a href="#experience">Experience</a>
+        <a href="#projects">Projects</a>
+        <a href="#education">Education</a>
+        <a href="#skills">Skills</a>
+        <a href="#contact">Contact</a>
+      </nav>
+
+      <section className="overview-hero panel" id="overview">
         <header className="panel-titlebar">overview.md</header>
         <div className="overview-hero-body">
           <div className="overview-hero-layout">
@@ -43,14 +65,10 @@ export function RecruiterPanel({ onOpenTerminal }: Props) {
               <h1 className="overview-name">{SITE.name}</h1>
               <p className="overview-title">{SITE.title}</p>
               <p className="overview-pitch">{SITE.pitch}</p>
-              <p className="overview-meta">
-                {SITE.location}
-                {!isTodoValue(SITE.availability) ? ` · ${SITE.availability}` : ''}
-              </p>
-              <p className="overview-meta overview-meta--secondary">
-                GPA {educationEntry.gpa.toFixed(2)}/7.00
-                {awardsLine ? ` · ${awardsLine}` : ''}
-              </p>
+              <p className="overview-meta">{metaParts.join(' · ')}</p>
+              {awardsLine ? (
+                <p className="overview-meta overview-meta--secondary">{awardsLine}</p>
+              ) : null}
               <div className="overview-cta">
                 <a href={RESUME_HREF} className="overview-btn overview-btn--primary" download>
                   [ Download resume ]
@@ -80,27 +98,11 @@ export function RecruiterPanel({ onOpenTerminal }: Props) {
         </div>
       </section>
 
-      <NowBuildingStrip projects={building} />
-
-      <section className="overview-section panel" aria-labelledby="featured-heading">
-        <header className="panel-titlebar" id="featured-heading">
-          featured_projects.md
-        </header>
-        <div className="overview-section-body">
-          <ProjectsPanel projects={projectsToShow} />
-          {!showAllProjects ? (
-            <button
-              type="button"
-              className="overview-btn overview-view-all"
-              onClick={() => setShowAllProjects(true)}
-            >
-              [ View all projects ]
-            </button>
-          ) : null}
-        </div>
-      </section>
-
-      <section className="overview-section panel" aria-labelledby="experience-heading">
+      <section
+        className="overview-section panel"
+        id="experience"
+        aria-labelledby="experience-heading"
+      >
         <header className="panel-titlebar" id="experience-heading">
           experience.md
         </header>
@@ -121,7 +123,37 @@ export function RecruiterPanel({ onOpenTerminal }: Props) {
         </div>
       </section>
 
-      <section className="overview-section panel" aria-labelledby="education-heading">
+      <section
+        className="overview-section panel"
+        id="projects"
+        aria-labelledby="featured-heading"
+      >
+        <header className="panel-titlebar" id="featured-heading">
+          featured_projects.md
+        </header>
+        <div className="overview-section-body">
+          <ProjectsPanel
+            projects={projectsToShow}
+            expandSlug={expandProjectSlug}
+            onExpandChange={onExpandChange}
+          />
+          {!showAllProjects && !expandProjectSlug ? (
+            <button
+              type="button"
+              className="overview-btn overview-view-all"
+              onClick={() => setShowAllProjects(true)}
+            >
+              [ View all projects ]
+            </button>
+          ) : null}
+        </div>
+      </section>
+
+      <section
+        className="overview-section panel"
+        id="education"
+        aria-labelledby="education-heading"
+      >
         <header className="panel-titlebar" id="education-heading">
           education.md
         </header>
@@ -133,7 +165,7 @@ export function RecruiterPanel({ onOpenTerminal }: Props) {
             {educationEntry.uni} · {educationEntry.period}
           </p>
           <p className="overview-gpa">
-            GPA {educationEntry.gpa.toFixed(2)}/7.00
+            GPA {educationEntry.gpa.toFixed(2)}/7.00 (UTS 7-point scale)
             {educationEntry.awards.length > 0
               ? ` · ${educationEntry.awards.join(' · ')}`
               : ''}
@@ -146,7 +178,11 @@ export function RecruiterPanel({ onOpenTerminal }: Props) {
         </div>
       </section>
 
-      <section className="overview-section panel" aria-labelledby="skills-heading">
+      <section
+        className="overview-section panel"
+        id="skills"
+        aria-labelledby="skills-heading"
+      >
         <header className="panel-titlebar" id="skills-heading">
           skills.md
         </header>
@@ -161,7 +197,36 @@ export function RecruiterPanel({ onOpenTerminal }: Props) {
         </div>
       </section>
 
-      <section className="overview-section panel" aria-labelledby="contact-heading">
+      {consented.length > 0 ? (
+        <section
+          className="overview-section panel"
+          aria-labelledby="endorsements-heading"
+        >
+          <header className="panel-titlebar" id="endorsements-heading">
+            what_people_say.md
+          </header>
+          <div className="overview-section-body">
+            <ul className="overview-endorsements">
+              {consented.map((e) => (
+                <li key={`${e.name}-${e.org}`}>
+                  <blockquote>{e.quote}</blockquote>
+                  <p>
+                    {e.name}
+                    {e.role ? `, ${e.role}` : ''}
+                    {e.org ? ` · ${e.org}` : ''}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      ) : null}
+
+      <section
+        className="overview-section panel"
+        id="contact"
+        aria-labelledby="contact-heading"
+      >
         <header className="panel-titlebar" id="contact-heading">
           contact.md
         </header>

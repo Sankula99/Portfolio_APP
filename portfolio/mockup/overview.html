@@ -1,0 +1,470 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Overview reshape mockup — Hire-Screen Shell</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Syne:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #0a0a0c;
+        --bg2: #0f1014;
+        --panel: #111316;
+        --panel2: #0d0f12;
+        --bar: #080809;
+        --border: rgba(255, 255, 255, 0.07);
+        --border-h: rgba(255, 255, 255, 0.14);
+        --grey-1: #8a8f98;
+        --grey-2: #8b919b;
+        --grey-3: #7a808a;
+        --grey-4: #1e2128;
+        --slate: #c2c8d4;
+        --ice: #7ec8e0;
+        --ice-dim: #4a8fa8;
+        --ice-dark: #1e4d60;
+        --green: #5ea880;
+        --amber: #a89460;
+        --radius-lg: 14px;
+        --radius-md: 10px;
+        --radius-sm: 6px;
+        --radius-pill: 999px;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        min-height: 100%;
+      }
+
+      body {
+        font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+          'Liberation Mono', 'Courier New', monospace;
+        font-size: 14px;
+        line-height: 1.5;
+        color: var(--grey-1);
+        background: radial-gradient(circle at top, #10131a 0, var(--bg) 55%, #000 100%);
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      a:focus-visible,
+      button:focus-visible {
+        outline: 2px solid var(--ice);
+        outline-offset: 2px;
+      }
+
+      .shell {
+        width: min(1120px, 100%);
+        margin: 0 auto;
+        padding: 24px 16px 48px;
+      }
+
+      .topbar {
+        min-height: 40px;
+        background: var(--bar);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 12px;
+        padding: 6px 12px;
+        margin-bottom: 16px;
+        font-size: 12px;
+      }
+
+      .tabs {
+        display: flex;
+        gap: 4px;
+      }
+
+      .tab {
+        padding: 4px 10px;
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--border);
+        background: transparent;
+        color: var(--grey-2);
+        font: inherit;
+        font-size: 12px;
+      }
+
+      .tab--active {
+        border-color: var(--ice-dim);
+        color: var(--ice);
+      }
+
+      .path {
+        flex: 1;
+        text-align: center;
+        color: var(--grey-2);
+      }
+
+      .status {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: var(--grey-2);
+      }
+
+      .status-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--green);
+        flex-shrink: 0;
+      }
+
+      .overview {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .panel {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 20px;
+      }
+
+      .hero {
+        display: flex;
+        flex-direction: column-reverse;
+        align-items: flex-start;
+        gap: 16px;
+      }
+
+      .hero-copy {
+        min-width: 0;
+        flex: 1;
+      }
+
+      .hero-owl {
+        width: 96px;
+        height: 96px;
+        border-radius: 50%;
+        border: 1px solid var(--ice-dim);
+        box-shadow: 0 0 28px rgba(126, 200, 224, 0.2);
+        object-fit: cover;
+        flex-shrink: 0;
+      }
+
+      .eyebrow {
+        margin: 0 0 8px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: var(--green);
+        font-size: 12px;
+      }
+
+      .name {
+        margin: 0 0 8px;
+        font-family: 'Syne', system-ui, sans-serif;
+        font-size: clamp(28px, 4vw, 40px);
+        font-weight: 700;
+        line-height: 1.1;
+        color: var(--slate);
+      }
+
+      .title {
+        margin: 0 0 12px;
+        font-family: 'Syne', system-ui, sans-serif;
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--slate);
+      }
+
+      .pitch {
+        margin: 0 0 12px;
+        max-width: 72ch;
+        font-size: 14px;
+        line-height: 1.5;
+        color: var(--grey-1);
+      }
+
+      .meta {
+        margin: 0;
+        font-size: 12px;
+        color: var(--grey-2);
+      }
+
+      .meta + .meta {
+        margin-top: 4px;
+        margin-bottom: 16px;
+      }
+
+      .cta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--border);
+        background: transparent;
+        color: var(--grey-1);
+        padding: 8px 12px;
+        font: inherit;
+        font-size: 12px;
+        cursor: pointer;
+      }
+
+      .btn:hover {
+        border-color: var(--ice-dim);
+        color: var(--ice);
+      }
+
+      .btn--primary {
+        border-color: var(--ice);
+        background: var(--ice);
+        color: var(--bg);
+      }
+
+      .btn--primary:hover {
+        border-color: var(--ice-dim);
+        background: var(--ice-dim);
+        color: var(--bg);
+      }
+
+      .section-heading {
+        margin: 0 0 12px;
+        font-family: 'Syne', system-ui, sans-serif;
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--slate);
+      }
+
+      .projects {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        counter-reset: project;
+      }
+
+      .project {
+        counter-increment: project;
+        background: var(--panel2);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 16px;
+      }
+
+      .project-header {
+        display: flex;
+        gap: 10px;
+        align-items: baseline;
+        margin-bottom: 8px;
+      }
+
+      .project-index {
+        font-size: 12px;
+        color: var(--grey-3);
+        min-width: 1.5ch;
+      }
+
+      .project-index::before {
+        content: counter(project);
+      }
+
+      .project-name {
+        margin: 0;
+        font-family: 'Syne', system-ui, sans-serif;
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--slate);
+      }
+
+      .project-summary {
+        margin: 0 0 8px;
+        font-size: 14px;
+        line-height: 1.45;
+        color: var(--grey-1);
+        max-width: 80ch;
+      }
+
+      .project-result {
+        margin: 0 0 12px;
+        font-size: 14px;
+        color: var(--ice);
+        max-width: 80ch;
+      }
+
+      .project-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+
+      .project-links a {
+        color: var(--ice);
+        font-size: 12px;
+      }
+
+      .project-links a:hover {
+        text-decoration: underline;
+      }
+
+      .view-all {
+        margin-top: 12px;
+      }
+
+      @media (min-width: 900px) {
+        .shell {
+          padding: 24px 24px 56px;
+        }
+
+        .hero {
+          flex-direction: row;
+          align-items: center;
+          gap: 28px;
+        }
+
+        .hero-owl {
+          width: 260px;
+          height: 260px;
+        }
+      }
+
+      @media (max-width: 700px) {
+        .path {
+          display: none;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          transition: none !important;
+          animation: none !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <header class="topbar" aria-label="Portfolio chrome">
+        <div class="tabs" role="tablist" aria-label="Portfolio views">
+          <button type="button" class="tab tab--active" role="tab" aria-selected="true">
+            Overview
+          </button>
+          <button type="button" class="tab" role="tab" aria-selected="false">Terminal</button>
+        </div>
+        <div class="path">shishir@arch:~/portfolio</div>
+        <div class="status">
+          <span class="status-dot" aria-hidden="true"></span>
+          Seeking internship and graduate roles
+        </div>
+      </header>
+
+      <main class="overview" id="overview-panel">
+        <section class="panel hero-panel" aria-labelledby="hero-name">
+          <div class="hero">
+            <div class="hero-copy">
+              <h1 class="name" id="hero-name">Shishir Sankula</h1>
+              <p class="title">Software Engineer (ML, Data &amp; Security)</p>
+              <p class="pitch">
+                Final-year Software Engineering student at UTS building ML, data and secure
+                full-stack products. Co-led two startup MVP teams. Seeking internship and graduate
+                roles.
+              </p>
+              <p class="meta">Sydney, NSW · Available now</p>
+              <p class="meta">GPA 6.04/7.00 · Dean's List 2026</p>
+              <div class="cta" aria-label="Contact and links">
+                <a class="btn btn--primary" href="/Shishir_Sankula_Resume.pdf">[ Download resume ]</a>
+                <a class="btn" href="mailto:sankulashishir@gmail.com">[ Email me ]</a>
+                <a class="btn" href="https://github.com/Sankula99" target="_blank" rel="noreferrer"
+                  >[ GitHub ]</a
+                >
+                <a
+                  class="btn"
+                  href="https://www.linkedin.com/in/shishirsankula"
+                  target="_blank"
+                  rel="noreferrer"
+                  >[ LinkedIn ]</a
+                >
+              </div>
+            </div>
+            <img
+              class="hero-owl"
+              src="/hero-owl-480.webp"
+              srcset="/hero-owl-240.webp 240w, /hero-owl-480.webp 480w"
+              sizes="(max-width: 899px) 96px, 260px"
+              width="460"
+              height="460"
+              decoding="async"
+              alt="Illustration of a steampunk owl in a top hat holding a laptop, the portfolio mascot"
+            />
+          </div>
+        </section>
+
+        <section class="panel" aria-labelledby="featured-heading">
+          <h2 class="section-heading" id="featured-heading">Featured projects</h2>
+          <ol class="projects">
+            <li class="project">
+              <div class="project-header">
+                <span class="project-index" aria-hidden="true"></span>
+                <h3 class="project-name">RAG Document Assistant</h3>
+              </div>
+              <p class="project-summary">
+                Local RAG assistant that answers questions over long PDFs with citations from
+                retrieved chunks.
+              </p>
+              <p class="project-result">
+                Currently exploring prompt engineering, retrieval optimisation and citation quality.
+              </p>
+              <div class="project-links">
+                <a
+                  href="https://github.com/Sankula99/RAG_Document_Assistant"
+                  target="_blank"
+                  rel="noreferrer"
+                  >[GitHub repository]</a
+                >
+              </div>
+            </li>
+            <li class="project">
+              <div class="project-header">
+                <span class="project-index" aria-hidden="true"></span>
+                <h3 class="project-name">
+                  Hybrid Deep Learning Fusion for Physiological Stress Detection
+                </h3>
+              </div>
+              <p class="project-summary">
+                Cross-dataset LODO evaluation of dual-stream CNN–recurrent fusion on BVP and EDA,
+                with pruned INT8 deployment on a Raspberry Pi Zero 2W.
+              </p>
+              <p class="project-result">
+                CNN+LSTM+GRU highest mean macro F1 (0.69); WESAD holdout 0.890 ± 0.009 at 60 s.
+              </p>
+              <div class="project-links">
+                <a href="/Hybrid_Deep_Learning_Stress_Detection.pdf" target="_blank" rel="noreferrer"
+                  >[Write-up]</a
+                >
+              </div>
+            </li>
+          </ol>
+          <button type="button" class="btn view-all">[ View all projects ]</button>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>

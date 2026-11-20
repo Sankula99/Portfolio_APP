@@ -78,6 +78,8 @@ export function NvimPanel() {
                   {'\n'}
                   &nbsp;&nbsp;&nbsp;&nbsp;&quot;Data Engineering&quot;,
                   {'\n'}
+                  &nbsp;&nbsp;&nbsp;&nbsp;&quot;Cybersecurity&quot;,
+                  {'\n'}
                   &nbsp;&nbsp;&nbsp;&nbsp;&quot;Secure Full-Stack&quot;]
                 </span>
                 ,

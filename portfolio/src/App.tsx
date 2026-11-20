@@ -1,8 +1,13 @@
-import { useCallback, useEffect, useState } from 'react'
+import { lazy, Suspense, useCallback, useEffect, useState } from 'react'
 import './App.css'
-import { LoginScreen } from './screens/LoginScreen'
-import { BootScreen } from './screens/BootScreen'
 import { DesktopScreen } from './screens/DesktopScreen'
+
+const LoginScreen = lazy(() =>
+  import('./screens/LoginScreen').then((m) => ({ default: m.LoginScreen })),
+)
+const BootScreen = lazy(() =>
+  import('./screens/BootScreen').then((m) => ({ default: m.BootScreen })),
+)
 
 type Screen = 'login' | 'boot' | 'desktop'
 
@@ -12,16 +17,17 @@ function shouldSkipIntro(): boolean {
   if (typeof window === 'undefined') return false
   try {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return true
-    if (window.sessionStorage.getItem(INTRO_KEY) === '1') return true
+    if (window.location.hash && window.location.hash.length > 1) return true
+    if (window.localStorage.getItem(INTRO_KEY) === '1') return true
   } catch {
-    // sessionStorage may be unavailable
+    // storage may be unavailable
   }
   return false
 }
 
 function markIntroSeen(): void {
   try {
-    window.sessionStorage.setItem(INTRO_KEY, '1')
+    window.localStorage.setItem(INTRO_KEY, '1')
   } catch {
     // ignore
   }
@@ -103,7 +109,9 @@ function App() {
             screen === 'login' && loginVisible ? 'screen--active' : ''
           } ${transitioning && screen === 'login' ? 'screen--fading' : ''}`}
         >
-          <LoginScreen />
+          <Suspense fallback={null}>
+            <LoginScreen />
+          </Suspense>
         </section>
 
         <section
@@ -112,7 +120,11 @@ function App() {
             screen === 'boot' && bootVisible ? 'screen--active' : ''
           } ${transitioning && screen === 'boot' ? 'screen--fading' : ''}`}
         >
-          {screen === 'boot' && <BootScreen onComplete={handleBootComplete} />}
+          {screen === 'boot' ? (
+            <Suspense fallback={null}>
+              <BootScreen onComplete={handleBootComplete} />
+            </Suspense>
+          ) : null}
         </section>
 
         <section

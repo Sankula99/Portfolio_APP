@@ -33,7 +33,7 @@ export function LoginScreen() {
           </p>
         </div>
 
-        <p className="login-skip-hint">press any key to skip</p>
+        <p className="login-skip-hint">Press any key or tap to skip</p>
       </main>
 
       <footer className="login-footer">

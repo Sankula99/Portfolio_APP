@@ -1,3 +1,11 @@
+export type Endorsement = {
+  quote: string
+  name: string
+  role: string
+  org: string
+  consent: boolean
+}
+
 export const SITE = {
   name: 'Shishir Sankula',
   title: 'Software Engineer (ML, Data & Security)',
@@ -9,8 +17,16 @@ export const SITE = {
   availability: 'Available now',
   status: 'Seeking internship and graduate roles',
   pitch:
-    'Final-year Software Engineering student at UTS building ML, data and secure full-stack products. Co-led two startup MVP teams. Seeking internship and graduate roles.',
-} as const
+    'Final-year Software Engineering student at UTS. Delivered two startup client MVPs: co-led a team of 5 (React, TypeScript, Supabase) and led frontend for a team of 6 (React Native). Also builds ML and security projects.',
+  metaDescription:
+    'Final-year SE student at UTS. Delivered two startup MVPs (co-led 5, led frontend for 6). Builds ML and security projects. Sydney.',
+  startDate: 'Can start immediately',
+  workRights: 'Australian citizen',
+  lookingFor:
+    'Internship and graduate software, ML, data and cybersecurity roles',
+  endorsements: [] as Endorsement[],
+  linkedinRecommendations: 'TODO: LinkedIn recommendations URL',
+}
 
 /** @deprecated Use SITE.status */
 export const STATUS_BADGE = SITE.status
