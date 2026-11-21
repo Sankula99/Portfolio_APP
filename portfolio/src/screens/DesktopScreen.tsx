@@ -260,15 +260,16 @@ export function DesktopScreen() {
           <Suspense fallback={null}>
             <DesktopPathBar />
             <div className="desktop-grid">
-              <div className="desktop-col-left desktop-col-left--fixed">
-                <RangerPanel onViewProjectDetails={viewProjectDetails} />
-              </div>
+              {/* DOM: nvim before ranger so stacked (≤1100px) reading/tab order matches visual */}
               <div className="desktop-col-right">
                 <NvimPanel />
                 <div className="desktop-bottom-row">
                   <BtopPanel />
                   <ContactPanel />
                 </div>
+              </div>
+              <div className="desktop-col-left desktop-col-left--fixed">
+                <RangerPanel onViewProjectDetails={viewProjectDetails} />
               </div>
             </div>
 
